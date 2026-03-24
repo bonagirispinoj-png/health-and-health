@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="theme-color" content="#0d2818"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Health is Wealth"/>
+<meta name="description" content="Health is Wealth — Complete AI Health + Fitness + Mental Wellness Platform"/>
+<title>Health is Wealth — AI Health Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<style>
+:root{
+  --forest:#0d2818;--forest2:#1a3d28;--forest3:#2d5a3d;--forest4:#3d7a52;
+  --sage:#6b9e7a;--sage2:#8fbf9e;--sage3:#b8d9c2;
+  --gold:#c9a84c;--gold2:#e8c87a;--gold3:#8a6820;
+  --red:#c0392b;--red2:#fde8e8;--amber:#d97706;--amber2:#fef3c7;
+  --blue:#1e40af;--blue2:#dbeafe;--purple:#7c3aed;--purple2:#f5f3ff;
+  --green:#166534;--green2:#dcfce7;
+  --bg:#f0f7f2;--bg2:#e4efe8;--bg3:#d8e8dd;
+  --surf:#ffffff;--bdr:#c8dece;--bdr2:#b0ccba;
+  --txt:#0f1f15;--txt2:#2d4a36;--txt3:#4a7058;--txt4:#7a9e86;--txt5:#adc8b6;
+  --e1:0 1px 4px rgba(13,40,24,.08);--e2:0 4px 16px rgba(13,40,24,.12);--e3:0 8px 32px rgba(13,40,24,.16);--e4:0 20px 60px rgba(0,0,0,.2);
+  --spring:cubic-bezier(.34,1.56,.64,1);--ease:cubic-bezier(.4,0,.2,1);
+}
+[data-theme="dark"]{
+  --bg:#061210;--bg2:#0a1a12;--bg3:#0f2018;
+  --surf:#0d1f14;--bdr:#1a3225;--bdr2:#254838;
+  --txt:#e8f5ec;--txt2:#b8d9c2;--txt3:#7aab88;--txt4:#4a7058;--txt5:#2d4a36;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased;}
+html,body{height:100%;overflow-x:hidden;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;}
+h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:var(--sage3);border-radius:2px;}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,#061210,#0d2818,#051510);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s,visibility .8s;}
+#splash.gone{opacity:0;visibility:hidden;pointer-events:none;}
+.sp-pulse{width:88px;height:88px;border-radius:50%;background:radial-gradient(circle,rgba(13,40,24,.9),rgba(5,15,10,.95));border:2px solid rgba(201,168,76,.3);display:flex;align-items:center;justify-content:center;font-size:2.4rem;margin-bottom:20px;animation:sp-pulse 2s ease infinite;box-shadow:0 0 0 0 rgba(201,168,76,.4);}
+@keyframes sp-pulse{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.4);}50%{box-shadow:0 0 0 20px rgba(201,168,76,0);}}
+.sp-title{font-family:'Cormorant Garamond',serif;font-size:1.9rem;color:#fff;font-weight:700;letter-spacing:1px;}
+.sp-title span{color:var(--gold2);}
+.sp-tag{font-size:.7rem;color:rgba(255,255,255,.35);letter-spacing:4px;text-transform:uppercase;margin-top:5px;}
+.sp-bar{width:180px;height:2px;background:rgba(255,255,255,.08);border-radius:1px;margin-top:28px;overflow:hidden;}
+.sp-bar-fill{height:100%;background:linear-gradient(90deg,transparent,var(--gold2),transparent);animation:sp-fill 2.4s ease forwards;}
+@keyframes sp-fill{from{transform:translateX(-100%);}to{transform:translateX(100%);}}
+.sp-ai{color:rgba(255,255,255,.25);font-size:.72rem;margin-top:12px;letter-spacing:1px;}
+
+/* AUTH */
+#authScreen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#061210,#0f2818,#051510);padding:24px;}
+.auth-card{width:100%;max-width:380px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:28px 22px;backdrop-filter:blur(12px);}
+.auth-brand{text-align:center;margin-bottom:22px;}
+.auth-brand-ico{font-size:2.8rem;margin-bottom:8px;}
+.auth-brand h1{font-family:'Cormorant Garamond',serif;font-size:1.7rem;color:#fff;}
+.auth-brand h1 span{color:var(--gold2);}
+.auth-brand p{font-size:.7rem;color:rgba(255,255,255,.35);letter-spacing:3px;margin-top:3px;}
+.auth-tabs{display:flex;background:rgba(0,0,0,.3);border-radius:10px;padding:3px;margin-bottom:18px;}
+.auth-tab{flex:1;padding:9px;border:none;border-radius:8px;cursor:pointer;font-size:.8rem;font-weight:700;transition:.2s;background:transparent;color:rgba(255,255,255,.4);}
+.auth-tab.on{background:var(--forest2);color:var(--gold2);}
+.ai-inp{width:100%;padding:12px 14px;margin-bottom:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;font-family:'Outfit',sans-serif;font-size:.9rem;outline:none;transition:.2s;}
+.ai-inp:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.12);}
+.ai-inp::placeholder{color:rgba(255,255,255,.3);}
+.btn-gold{width:100%;padding:13px;border:none;border-radius:10px;cursor:pointer;background:linear-gradient(135deg,var(--gold3),var(--gold),var(--gold2));color:var(--forest);font-weight:800;font-size:.88rem;letter-spacing:.3px;box-shadow:0 4px 20px rgba(201,168,76,.3);transition:.2s;}
+.btn-gold:hover{transform:translateY(-1px);}
+.btn-gold:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.auth-err{color:#ff8a8a;font-size:.76rem;text-align:center;min-height:18px;margin-top:6px;}
+
+/* APP SHELL */
+#app{display:none;min-height:100vh;padding-bottom:72px;}
+#app.on{display:block;}
+
+/* TOP BAR */
+.topbar{background:var(--forest);position:sticky;top:0;z-index:400;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;box-shadow:0 2px 16px rgba(0,0,0,.3);}
+.tb-brand{display:flex;align-items:center;gap:8px;cursor:pointer;}
+.tb-ico{font-size:1.4rem;}
+.tb-name{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:700;color:#fff;}
+.tb-name span{color:var(--gold2);}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.tb-streak{background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:var(--gold2);padding:4px 10px;border-radius:16px;font-size:.72rem;font-weight:700;}
+.tb-theme{background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);padding:5px 9px;border-radius:8px;cursor:pointer;font-size:.82rem;transition:.2s;}
+.tb-theme:hover{color:#fff;}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:400;background:var(--surf);border-top:1px solid var(--bdr);display:flex;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -4px 20px rgba(0,0,0,.08);}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 2px;background:none;border:none;cursor:pointer;transition:.2s;min-width:0;}
+.bn-item.on{color:var(--forest);}
+.bn-item:not(.on){color:var(--txt4);}
+.bn-ico{font-size:1.1rem;line-height:1;}
+.bn-lbl{font-size:.52rem;font-weight:700;letter-spacing:.2px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:52px;}
+.bn-item.on .bn-ico{transform:translateY(-2px);}
+
+/* PAGES */
+.pg{display:none;} .pg.on{display:block;}
+.wrap{max-width:480px;margin:0 auto;padding:14px 14px 16px;}
+
+/* CARDS */
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:14px;padding:16px;box-shadow:var(--e1);margin-bottom:12px;}
+.card-hd{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:700;color:var(--txt);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.card-hd::before{content:'';width:3px;height:16px;background:linear-gradient(180deg,var(--gold),var(--sage));border-radius:2px;flex-shrink:0;}
+.sect{font-family:'Cormorant Garamond',serif;font-size:.72rem;color:var(--txt4);letter-spacing:2px;text-transform:uppercase;margin:16px 0 8px;display:flex;align-items:center;gap:8px;}
+.sect::after{content:'';flex:1;height:1px;background:var(--bdr);}
+
+/* WELLNESS SCORE RING */
+.score-wrap{display:flex;align-items:center;justify-content:center;gap:20px;padding:16px 0;}
+.score-ring{position:relative;width:100px;height:100px;}
+.score-ring svg{transform:rotate(-90deg);}
+.score-ring-val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.score-num{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;line-height:1;}
+.score-lbl{font-size:.6rem;color:var(--txt4);letter-spacing:1px;}
+.score-details{display:flex;flex-direction:column;gap:6px;}
+.score-metric{display:flex;align-items:center;gap:8px;font-size:.8rem;}
+.score-metric-ico{font-size:1rem;width:24px;}
+.score-metric-val{font-weight:700;color:var(--txt2);margin-left:auto;}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px;}
+.stat-card{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:14px;box-shadow:var(--e1);position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:3px 3px 0 0;}
+.sc-steps::before{background:linear-gradient(90deg,var(--forest),var(--sage));}
+.sc-hr::before{background:linear-gradient(90deg,var(--red),#e74c3c);}
+.sc-sleep::before{background:linear-gradient(90deg,var(--purple),#9b59b6);}
+.sc-water::before{background:linear-gradient(90deg,var(--blue),#3498db);}
+.stat-v{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;color:var(--txt);line-height:1;}
+.stat-l{font-size:.66rem;color:var(--txt4);margin-top:2px;letter-spacing:.5px;text-transform:uppercase;}
+.stat-sub{font-size:.7rem;color:var(--txt3);margin-top:4px;}
+
+/* MINI CHART (pure CSS/SVG) */
+.mini-chart{width:100%;height:60px;margin-top:8px;}
+.chart-bar-wrap{display:flex;align-items:flex-end;gap:3px;height:50px;padding:0 2px;}
+.chart-bar{flex:1;border-radius:3px 3px 0 0;min-height:4px;transition:height .5s var(--ease);}
+.chart-labels{display:flex;justify-content:space-between;font-size:.56rem;color:var(--txt4);margin-top:2px;padding:0 2px;}
+
+/* STREAK */
+.streak-row{display:flex;gap:6px;justify-content:center;padding:8px 0;}
+.streak-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0;}
+.sd-done{background:var(--forest);color:var(--gold2);}
+.sd-today{background:var(--gold);color:var(--forest);box-shadow:0 0 0 3px rgba(201,168,76,.3);}
+.sd-future{background:var(--bg2);color:var(--txt4);border:1px solid var(--bdr);}
+
+/* MOOD */
+.mood-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:8px 0;}
+.mood-btn{width:48px;height:48px;border-radius:50%;border:2px solid var(--bdr);background:var(--bg2);cursor:pointer;font-size:1.5rem;transition:.2s;display:flex;align-items:center;justify-content:center;}
+.mood-btn:hover,.mood-btn.on{border-color:var(--gold);background:var(--amber2);transform:scale(1.1);}
+
+/* MEDITATION TIMER */
+.med-timer{text-align:center;padding:16px 0;}
+.med-time-display{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:700;color:var(--forest);letter-spacing:2px;}
+.med-circle{width:120px;height:120px;border-radius:50%;border:4px solid var(--sage3);margin:12px auto;display:flex;align-items:center;justify-content:center;position:relative;background:radial-gradient(circle,var(--green2),var(--bg));}
+.med-circle.active{border-color:var(--forest);animation:med-breathe 4s ease infinite;}
+@keyframes med-breathe{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(13,40,24,.2);}50%{transform:scale(1.08);box-shadow:0 0 0 15px rgba(13,40,24,0);}}
+
+/* BREATHING TRAINER */
+.breath-trainer{text-align:center;padding:12px;}
+.breath-circle{width:100px;height:100px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;color:#fff;transition:all 4s ease;background:radial-gradient(circle,var(--forest),var(--forest2));}
+.breath-inhale{transform:scale(1.4);background:radial-gradient(circle,var(--forest4),var(--forest));}
+.breath-hold{transform:scale(1.4);background:radial-gradient(circle,var(--gold),var(--gold3));}
+.breath-exhale{transform:scale(1);background:radial-gradient(circle,var(--forest),#061210);}
+
+/* FAMILY CARD */
+.fam-card{background:var(--surf);border:1px solid var(--bdr);border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:var(--e1);}
+.fam-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.fam-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;}
+.fam-av-dad{background:linear-gradient(135deg,#1e3a8a,#2563eb);}
+.fam-av-mom{background:linear-gradient(135deg,#9d174d,#ec4899);}
+.fam-name{font-weight:700;font-size:.94rem;color:var(--txt2);}
+.fam-status{font-size:.72rem;color:var(--txt4);margin-top:2px;}
+.fam-vitals{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.fam-vital{background:var(--bg2);border-radius:8px;padding:8px;text-align:center;}
+.fv-val{font-weight:700;font-size:.94rem;color:var(--txt);}
+.fv-lbl{font-size:.62rem;color:var(--txt4);margin-top:2px;}
+
+/* NEARBY PLACES */
+.place-card{display:flex;align-items:center;gap:12px;padding:10px;background:var(--bg2);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:.2s;}
+.place-card:hover{background:var(--bg3);}
+.place-ico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.place-hosp{background:var(--red2);}
+.place-pharm{background:var(--green2);}
+.place-name{font-size:.86rem;font-weight:600;color:var(--txt2);}
+.place-dist{font-size:.72rem;color:var(--txt4);margin-top:2px;}
+.place-open{font-size:.64rem;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:auto;}
+.po-open{background:var(--green2);color:var(--green);}
+.po-closed{background:var(--red2);color:var(--red);}
+
+/* RISK + ALERT BANNERS */
+.alert-banner{border-radius:12px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:.82rem;line-height:1.5;}
+.ab-stress{background:linear-gradient(135deg,#fef3c7,#fff8e6);border:1px solid rgba(217,119,6,.3);color:#92400e;}
+.ab-warning{background:linear-gradient(135deg,#fde8e8,#fff5f5);border:1px solid rgba(192,57,43,.25);color:#7f1d1d;}
+.ab-info{background:linear-gradient(135deg,#dbeafe,#eff6ff);border:1px solid rgba(30,64,175,.2);color:#1e3a8a;}
+.ab-success{background:linear-gradient(135deg,#dcfce7,#f0fdf4);border:1px solid rgba(22,101,52,.2);color:#14532d;}
+.ab-ico{font-size:1.2rem;flex-shrink:0;margin-top:1px;}
+
+/* ROUTINE */
+.routine-item{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--bg2);border-radius:10px;margin-bottom:7px;border-left:3px solid transparent;}
+.ri-time{font-family:'Cormorant Garamond',serif;font-size:.88rem;font-weight:600;color:var(--forest);min-width:50px;}
+.ri-ico{font-size:1.1rem;flex-shrink:0;}
+.ri-text{font-size:.82rem;color:var(--txt2);flex:1;}
+.ri-done{opacity:.5;text-decoration:line-through;}
+.ri-now{border-left-color:var(--gold);background:var(--amber2);}
+
+/* FIRST AID */
+.firstaid-card{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;margin-bottom:8px;overflow:hidden;cursor:pointer;}
+.fa-header{padding:12px 14px;display:flex;align-items:center;gap:10px;}
+.fa-ico{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.fa-title{font-size:.86rem;font-weight:700;color:var(--txt2);flex:1;}
+.fa-arrow{color:var(--txt4);transition:.2s;}
+.fa-body{padding:0 14px 12px;font-size:.8rem;color:var(--txt3);line-height:1.6;display:none;}
+.fa-body.open{display:block;}
+
+/* POSTURE */
+.posture-box{background:var(--surf);border:2px solid var(--bdr);border-radius:14px;padding:16px;text-align:center;}
+.posture-status{font-size:2rem;margin-bottom:8px;}
+.posture-lbl{font-size:.9rem;font-weight:700;color:var(--txt2);margin-bottom:4px;}
+.posture-sub{font-size:.76rem;color:var(--txt4);}
+
+/* SOS BUTTON */
+.sos-btn{width:100%;padding:18px;background:linear-gradient(135deg,var(--red),#e74c3c);color:#fff;border:none;border-radius:14px;font-size:1.1rem;font-weight:800;cursor:pointer;letter-spacing:1px;box-shadow:0 4px 24px rgba(192,57,43,.4);transition:.2s;display:flex;align-items:center;justify-content:center;gap:10px;}
+.sos-btn:hover{transform:translateY(-1px);box-shadow:0 6px 32px rgba(192,57,43,.5);}
+.sos-btn:active{transform:scale(.98);}
+@keyframes sos-pulse{0%,100%{box-shadow:0 4px 24px rgba(192,57,43,.4);}50%{box-shadow:0 4px 40px rgba(192,57,43,.7),0 0 0 10px rgba(192,57,43,.1);}}
+.sos-pulse{animation:sos-pulse 1.5s infinite;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border:none;border-radius:9px;cursor:pointer;font-weight:700;font-size:.82rem;transition:.2s;font-family:'Outfit',sans-serif;}
+.btn-primary{background:var(--forest);color:var(--gold2);}
+.btn-primary:hover{background:var(--forest2);}
+.btn-outline{background:transparent;border:1.5px solid var(--bdr);color:var(--txt2);}
+.btn-full{width:100%;display:flex;}
+.btn-red{background:var(--red);color:#fff;}
+.btn-amber{background:var(--amber);color:#fff;}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.btn:active{transform:scale(.98);}
+
+/* PROGRESS BAR */
+.progress-bar{height:8px;background:var(--bg2);border-radius:4px;overflow:hidden;margin-top:6px;}
+.pb-fill{height:100%;border-radius:4px;transition:width .6s var(--ease);}
+.pb-steps{background:linear-gradient(90deg,var(--forest),var(--sage));}
+.pb-water{background:linear-gradient(90deg,var(--blue),#60a5fa);}
+.pb-sleep{background:linear-gradient(90deg,var(--purple),#a78bfa);}
+
+/* INPUT */
+.inp{width:100%;padding:11px 13px;border:1.5px solid var(--bdr);border-radius:9px;font-size:.88rem;outline:none;background:var(--bg);color:var(--txt);transition:.2s;font-family:'Outfit',sans-serif;margin-bottom:10px;}
+.inp:focus{border-color:var(--forest);background:var(--surf);}
+.inp::placeholder{color:var(--txt4);}
+.sel{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237a9e86' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+
+/* ALERTS */
+.alert{padding:10px 12px;border-radius:9px;font-size:.8rem;line-height:1.5;display:flex;gap:8px;align-items:flex-start;margin:8px 0;}
+.alert-s{background:var(--green2);color:var(--green);border-left:3px solid var(--green);}
+.alert-e{background:var(--red2);color:var(--red);border-left:3px solid var(--red);}
+.alert-w{background:var(--amber2);color:var(--amber);border-left:3px solid var(--amber);}
+.alert-i{background:var(--blue2);color:var(--blue);border-left:3px solid var(--blue);}
+
+/* TOAST */
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--forest);color:#fff;padding:9px 20px;border-radius:20px;font-size:.78rem;font-weight:600;z-index:1000;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap;box-shadow:var(--e3);}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* SKELETON */
+.ske{background:linear-gradient(90deg,var(--bg2) 25%,var(--bg3) 50%,var(--bg2) 75%);background-size:200% 100%;animation:ske 1.6s infinite;border-radius:6px;}
+@keyframes ske{from{background-position:200% 0;}to{background-position:-200% 0;}}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:32px 20px;color:var(--txt4);}
+.empty-ico{font-size:2.2rem;margin-bottom:10px;}
+.empty-title{font-size:.92rem;font-weight:700;color:var(--txt3);margin-bottom:5px;}
+
+/* MODAL */
+.modal{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:.3s;}
+.modal.on{opacity:1;visibility:visible;}
+.modal-box{background:var(--surf);border-radius:20px;padding:24px;width:100%;max-width:380px;box-shadow:var(--e4);animation:modal-in .35s var(--spring) both;}
+@keyframes modal-in{from{opacity:0;transform:scale(.88);}to{opacity:1;transform:none;}}
+
+/* DIGITAL TWIN */
+.twin-body{display:flex;justify-content:center;padding:16px 0;position:relative;}
+.twin-figure{width:80px;position:relative;}
+.twin-figure svg{width:100%;}
+.twin-indicators{position:absolute;right:-80px;top:0;display:flex;flex-direction:column;gap:6px;}
+.twin-ind{background:var(--surf);border:1px solid var(--bdr);border-radius:6px;padding:4px 8px;font-size:.65rem;font-weight:700;white-space:nowrap;}
+.ti-green{color:var(--green);border-color:rgba(22,101,52,.3);}
+.ti-amber{color:var(--amber);border-color:rgba(217,119,6,.3);}
+.ti-red{color:var(--red);border-color:rgba(192,57,43,.3);}
+
+/* TAGS */
+.tag{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:5px;font-size:.66rem;font-weight:800;letter-spacing:.4px;}
+.tag-green{background:var(--green2);color:var(--green);}
+.tag-red{background:var(--red2);color:var(--red);}
+.tag-amber{background:var(--amber2);color:var(--amber);}
+.tag-blue{background:var(--blue2);color:var(--blue);}
+.tag-forest{background:var(--forest);color:var(--gold2);}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="sp-pulse">🌿</div>
+  <div class="sp-title">Health is <span>Wealth</span></div>
+  <div class="sp-tag">AI Health Platform</div>
+  <div class="sp-bar"><div class="sp-bar-fill"></div></div>
+  <div class="sp-ai">Powered by AI · Firebase · GPS</div>
+</div>
+
+<!-- AUTH -->
+<div id="authScreen">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="auth-brand-ico">🌿</div>
+      <h1>Health is <span>Wealth</span></h1>
+      <p>Complete AI Health Platform</p>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab on" id="tabReg" onclick="switchTab('reg')">Register</button>
+      <button class="auth-tab" id="tabLog" onclick="switchTab('log')">Login</button>
+    </div>
+    <div id="authErr" class="auth-err"></div>
+    <div id="regPanel">
+      <input class="ai-inp" id="rName" placeholder="Your name"/>
+      <input class="ai-inp" id="rEmail" type="email" placeholder="Email address"/>
+      <input class="ai-inp" id="rPass" type="password" placeholder="Password (min 6 chars)"/>
+      <select class="ai-inp sel" id="rBlood"><option value="">Blood Group</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
+      <button class="btn-gold" onclick="doRegister()">Start My Health Journey</button>
+    </div>
+    <div id="logPanel" style="display:none;">
+      <input class="ai-inp" id="lEmail" type="email" placeholder="Email address"/>
+      <input class="ai-inp" id="lPass" type="password" placeholder="Password"/>
+      <button class="btn-gold" onclick="doLogin()">Login</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header class="topbar" id="topBar" style="display:none;">
+    <div class="tb-brand" onclick="navTo('home')">
+      <span class="tb-ico">🌿</span>
+      <span class="tb-name">Health is <span>Wealth</span></span>
+    </div>
+    <div class="tb-right">
+      <div class="tb-streak">🔥 <span id="streakCount">0</span>d</div>
+      <button class="tb-theme" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </header>
+
+  <!-- ═══ HOME / DASHBOARD ═══ -->
+  <div class="pg on" id="pg-home">
+    <div class="wrap">
+      <!-- Alerts -->
+      <div id="alertBanners"></div>
+
+      <!-- Wellness Score -->
+      <div class="card">
+        <div class="card-hd">🏆 Wellness Score</div>
+        <div class="score-wrap">
+          <div class="score-ring">
+            <svg width="100" height="100" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" fill="none" stroke="var(--bg2)" stroke-width="10"/>
+              <circle cx="50" cy="50" r="42" fill="none" stroke="var(--forest)" stroke-width="10" stroke-linecap="round" id="scoreCircle" stroke-dasharray="263.9" stroke-dashoffset="263.9"/>
+            </svg>
+            <div class="score-ring-val">
+              <span class="score-num" id="wellnessScore">--</span>
+              <span class="score-lbl">/100</span>
+            </div>
+          </div>
+          <div class="score-details">
+            <div class="score-metric"><span class="score-metric-ico">👣</span>Steps<span class="score-metric-val" id="scoreSteps">--</span></div>
+            <div class="score-metric"><span class="score-metric-ico">❤️</span>HR<span class="score-metric-val" id="scoreHR">--</span></div>
+            <div class="score-metric"><span class="score-metric-ico">🌙</span>Sleep<span class="score-metric-val" id="scoreSleep">--</span></div>
+            <div class="score-metric"><span class="score-metric-ico">😊</span>Mood<span class="score-metric-val" id="scoreMood">--</span></div>
+          </div>
+        </div>
+        <div class="progress-bar"><div class="pb-fill pb-steps" id="wellnessBar" style="width:0%"></div></div>
+      </div>
+
+      <!-- Today's Routine -->
+      <div class="card">
+        <div class="card-hd">📅 Today's AI Routine</div>
+        <div id="routineList"></div>
+        <button class="btn btn-outline btn-full" onclick="generateRoutine()" style="margin-top:8px;">🤖 Regenerate Routine</button>
+      </div>
+
+      <!-- Streak -->
+      <div class="card">
+        <div class="card-hd">🔥 Daily Streak</div>
+        <div class="streak-row" id="streakRow"></div>
+        <div style="text-align:center;font-size:.8rem;color:var(--txt3);margin-top:8px;">Keep going! Log your health data daily to maintain streak.</div>
+      </div>
+
+      <!-- Digital Twin -->
+      <div class="card">
+        <div class="card-hd">🧬 Digital Twin Health Model</div>
+        <div class="twin-body">
+          <div class="twin-figure">
+            <svg viewBox="0 0 80 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Body outline -->
+              <circle cx="40" cy="20" r="14" fill="var(--bg2)" stroke="var(--forest)" stroke-width="2"/>
+              <rect x="26" y="36" width="28" height="60" rx="8" fill="var(--bg2)" stroke="var(--forest)" stroke-width="2"/>
+              <rect x="10" y="38" width="16" height="44" rx="6" fill="var(--bg2)" stroke="var(--forest)" stroke-width="2"/>
+              <rect x="54" y="38" width="16" height="44" rx="6" fill="var(--bg2)" stroke="var(--forest)" stroke-width="2"/>
+              <rect x="26" y="96" width="12" height="48" rx="6" fill="var(--bg2)" stroke="var(--forest)" stroke-width="2"/>
+              <rect x="42" y="96" width="12" height="48" rx="6" fill="var(--bg2)" stroke="var(--forest)" stroke-width="2"/>
+              <!-- Heart indicator -->
+              <circle cx="40" cy="56" r="6" fill="var(--red2)" stroke="var(--red)" stroke-width="1.5" id="twinHeart"/>
+              <!-- Brain indicator -->
+              <circle cx="40" cy="14" r="5" fill="var(--blue2)" stroke="var(--blue)" stroke-width="1.5" id="twinBrain"/>
+              <!-- Lungs -->
+              <ellipse cx="34" cy="66" rx="4" ry="6" fill="var(--green2)" stroke="var(--green)" stroke-width="1" id="twinLungL"/>
+              <ellipse cx="46" cy="66" rx="4" ry="6" fill="var(--green2)" stroke="var(--green)" stroke-width="1" id="twinLungR"/>
+            </svg>
+          </div>
+          <div class="twin-indicators" id="twinIndicators">
+            <div class="twin-ind ti-green">❤️ HR: Normal</div>
+            <div class="twin-ind ti-green">🫁 Lungs: Good</div>
+            <div class="twin-ind ti-green">🧠 Stress: Low</div>
+            <div class="twin-ind ti-amber">😴 Sleep: Fair</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Predictive Risk -->
+      <div class="card">
+        <div class="card-hd">🔮 Predictive Health Risk</div>
+        <div id="predictiveRisk"></div>
+      </div>
+
+      <!-- Download Report -->
+      <button class="btn btn-primary btn-full" onclick="downloadReport()" style="margin-bottom:12px;">📥 Download Health Report PDF</button>
+    </div>
+  </div>
+
+  <!-- ═══ FITNESS PAGE ═══ -->
+  <div class="pg" id="pg-fitness">
+    <div class="wrap">
+      <div class="stat-grid">
+        <div class="stat-card sc-steps">
+          <div class="stat-v" id="stepsVal">0</div>
+          <div class="stat-l">Steps Today</div>
+          <div class="stat-sub">Goal: 8,000</div>
+          <div class="progress-bar"><div class="pb-fill pb-steps" id="stepsPB" style="width:0%"></div></div>
+        </div>
+        <div class="stat-card sc-hr">
+          <div class="stat-v" id="hrVal">--</div>
+          <div class="stat-l">Heart Rate BPM</div>
+          <div class="stat-sub" id="hrStatus">Measure below</div>
+        </div>
+        <div class="stat-card sc-sleep">
+          <div class="stat-v" id="sleepVal">--</div>
+          <div class="stat-l">Sleep Hours</div>
+          <div class="stat-sub" id="sleepStatus">Log below</div>
+        </div>
+        <div class="stat-card sc-water">
+          <div class="stat-v" id="waterVal">0</div>
+          <div class="stat-l">Water (glasses)</div>
+          <div class="stat-sub">Goal: 8 glasses</div>
+          <div class="progress-bar"><div class="pb-fill pb-water" id="waterPB" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <!-- Steps chart -->
+      <div class="card">
+        <div class="card-hd">👣 7-Day Steps Chart</div>
+        <div class="chart-bar-wrap" id="stepsChart"></div>
+        <div class="chart-labels" id="stepsChartLabels"></div>
+      </div>
+
+      <!-- HR Simulator -->
+      <div class="card">
+        <div class="card-hd">❤️ Heart Rate Monitor</div>
+        <div style="text-align:center;padding:12px 0;">
+          <div style="font-size:3rem;font-weight:700;color:var(--red);font-family:'Cormorant Garamond',serif;" id="hrBig">--</div>
+          <div style="font-size:.8rem;color:var(--txt4);margin-bottom:12px;">BPM · Normal: 60–100</div>
+          <button class="btn btn-primary" onclick="measureHR()">❤️ Measure Now</button>
+        </div>
+        <div id="hrTrend"></div>
+        <div id="hrInsight" style="margin-top:8px;"></div>
+      </div>
+
+      <!-- Sleep Logger -->
+      <div class="card">
+        <div class="card-hd">🌙 Sleep Tracker</div>
+        <input class="inp" id="sleepInput" type="number" step="0.5" min="3" max="14" placeholder="Hours slept (e.g. 7.5)"/>
+        <button class="btn btn-primary btn-full" onclick="logSleep()">Log Sleep</button>
+        <div id="sleepChart" class="chart-bar-wrap" style="margin-top:10px;"></div>
+        <div id="sleepChartLabels" class="chart-labels"></div>
+        <div id="sleepInsight" style="margin-top:8px;font-size:.8rem;"></div>
+      </div>
+
+      <!-- Water tracker -->
+      <div class="card">
+        <div class="card-hd">💧 Hydration Tracker</div>
+        <div style="display:flex;align-items:center;gap:10px;justify-content:center;padding:8px 0;">
+          <button class="btn btn-outline" onclick="logWater(-1)">−</button>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--blue);min-width:60px;text-align:center;" id="waterCount">0</div>
+          <button class="btn btn-primary" onclick="logWater(1)">+ Glass</button>
+        </div>
+        <div class="progress-bar"><div class="pb-fill pb-water" id="waterPB2" style="width:0%"></div></div>
+        <div id="waterTip" style="font-size:.78rem;color:var(--txt3);margin-top:8px;text-align:center;"></div>
+      </div>
+
+      <!-- Posture Monitor -->
+      <div class="card">
+        <div class="card-hd">🪑 Posture Monitor</div>
+        <div class="posture-box">
+          <div class="posture-status" id="postureIco">🪑</div>
+          <div class="posture-lbl" id="postureLbl">Click to check posture</div>
+          <div class="posture-sub" id="postureSub">Uses camera to detect sitting position</div>
+          <div style="margin-top:10px;">
+            <button class="btn btn-primary" onclick="checkPosture()">📷 Check Posture</button>
+          </div>
+          <div id="postureAlert" style="margin-top:8px;"></div>
+        </div>
+      </div>
+
+      <!-- Sedentary Alert -->
+      <div class="card">
+        <div class="card-hd">⏰ Sedentary Alert</div>
+        <div id="sedentaryStatus"></div>
+        <button class="btn btn-primary" onclick="resetSedentary()" style="margin-top:8px;">✅ I just moved!</button>
+      </div>
+
+      <!-- Sync -->
+      <div class="card">
+        <div class="card-hd">🔄 Sync Health Data</div>
+        <button class="btn btn-outline btn-full" onclick="mockSync()">Sync from Wearable / Phone Sensors</button>
+        <div id="syncStatus" style="margin-top:8px;font-size:.8rem;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ WELLNESS PAGE ═══ -->
+  <div class="pg" id="pg-wellness">
+    <div class="wrap">
+      <!-- Mood Tracker -->
+      <div class="card">
+        <div class="card-hd">😊 Mood Tracker</div>
+        <div style="font-size:.8rem;color:var(--txt3);margin-bottom:8px;">How are you feeling right now?</div>
+        <div class="mood-row" id="moodRow">
+          <button class="mood-btn" onclick="setMood('😄','Great')">😄</button>
+          <button class="mood-btn" onclick="setMood('🙂','Good')">🙂</button>
+          <button class="mood-btn" onclick="setMood('😐','Neutral')">😐</button>
+          <button class="mood-btn" onclick="setMood('😔','Sad')">😔</button>
+          <button class="mood-btn" onclick="setMood('😤','Stressed')">😤</button>
+          <button class="mood-btn" onclick="setMood('😴','Tired')">😴</button>
+        </div>
+        <div id="moodLog" style="margin-top:10px;font-size:.82rem;color:var(--txt3);"></div>
+      </div>
+
+      <!-- Meditation Timer -->
+      <div class="card">
+        <div class="card-hd">🧘 Meditation Timer</div>
+        <div class="med-timer">
+          <div class="med-circle" id="medCircle">
+            <div style="font-size:.82rem;font-weight:700;color:var(--forest);" id="medStatus">Tap Start</div>
+          </div>
+          <div class="med-time-display" id="medDisplay">05:00</div>
+          <div style="font-size:.78rem;color:var(--txt4);margin-bottom:12px;" id="medPhase">Choose duration and start</div>
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;">
+            <button class="btn btn-outline" onclick="setMedTime(5)">5m</button>
+            <button class="btn btn-outline" onclick="setMedTime(10)">10m</button>
+            <button class="btn btn-outline" onclick="setMedTime(15)">15m</button>
+            <button class="btn btn-outline" onclick="setMedTime(20)">20m</button>
+          </div>
+          <button class="btn btn-primary" id="medBtn" onclick="toggleMed()">▶ Start Meditation</button>
+        </div>
+        <div id="medStats" style="margin-top:10px;font-size:.8rem;color:var(--txt3);text-align:center;"></div>
+      </div>
+
+      <!-- Breathing Trainer -->
+      <div class="card">
+        <div class="card-hd">🌬️ Breathing Trainer (4-7-8)</div>
+        <div class="breath-trainer">
+          <div class="breath-circle" id="breathCircle">Breathe</div>
+          <div style="font-size:.8rem;color:var(--txt3);margin-bottom:12px;" id="breathPhase">Tap start for 4-7-8 breathing</div>
+          <button class="btn btn-primary" id="breathBtn" onclick="toggleBreath()">▶ Start Breathing</button>
+        </div>
+        <div class="alert alert-i" style="margin-top:8px;font-size:.76rem;">
+          <span>ℹ️</span><span>4-7-8 technique: Inhale 4s → Hold 7s → Exhale 8s. Reduces stress in 2 minutes.</span>
+        </div>
+      </div>
+
+      <!-- Mental Wellness Tips -->
+      <div class="card">
+        <div class="card-hd">🧠 Mental Wellness</div>
+        <div id="mentalTips"></div>
+        <button class="btn btn-outline btn-full" onclick="loadMentalTips()" style="margin-top:8px;">🔄 New Tips</button>
+      </div>
+
+      <!-- Immunity Booster -->
+      <div class="card">
+        <div class="card-hd">🛡️ Immunity Booster Tips</div>
+        <div id="immunityTips"></div>
+      </div>
+
+      <!-- Emotion Detection -->
+      <div class="card">
+        <div class="card-hd">🎭 Emotion Pattern Detection</div>
+        <div id="emotionDetection"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FAMILY PAGE ═══ -->
+  <div class="pg" id="pg-family">
+    <div class="wrap">
+      <div class="alert alert-i" style="margin-bottom:12px;">
+        <span>ℹ️</span><span>Track and monitor your family members' health remotely. They need to install this app and share their data.</span>
+      </div>
+
+      <!-- Father -->
+      <div class="fam-card" id="fatherCard">
+        <div class="fam-header">
+          <div class="fam-av fam-av-dad">👨</div>
+          <div>
+            <div class="fam-name" id="fatherName">Father</div>
+            <div class="fam-status" id="fatherStatus">Not connected</div>
+          </div>
+          <button class="btn btn-outline" style="margin-left:auto;font-size:.72rem;" onclick="editFamily('father')">Edit</button>
+        </div>
+        <div class="fam-vitals">
+          <div class="fam-vital"><div class="fv-val" id="fatherHR">--</div><div class="fv-lbl">HR BPM</div></div>
+          <div class="fam-vital"><div class="fv-val" id="fatherBP">--</div><div class="fv-lbl">BP</div></div>
+          <div class="fam-vital"><div class="fv-val" id="fatherSteps">--</div><div class="fv-lbl">Steps</div></div>
+        </div>
+        <div id="fatherAlert" style="margin-top:8px;"></div>
+      </div>
+
+      <!-- Mother -->
+      <div class="fam-card" id="motherCard">
+        <div class="fam-header">
+          <div class="fam-av fam-av-mom">👩</div>
+          <div>
+            <div class="fam-name" id="motherName">Mother</div>
+            <div class="fam-status" id="motherStatus">Not connected</div>
+          </div>
+          <button class="btn btn-outline" style="margin-left:auto;font-size:.72rem;" onclick="editFamily('mother')">Edit</button>
+        </div>
+        <div class="fam-vitals">
+          <div class="fam-vital"><div class="fv-val" id="motherHR">--</div><div class="fv-lbl">HR BPM</div></div>
+          <div class="fam-vital"><div class="fv-val" id="motherBP">--</div><div class="fv-lbl">BP</div></div>
+          <div class="fam-vital"><div class="fv-val" id="motherSteps">--</div><div class="fv-lbl">Steps</div></div>
+        </div>
+        <div id="motherAlert" style="margin-top:8px;"></div>
+      </div>
+
+      <!-- Simulate family data -->
+      <button class="btn btn-primary btn-full" onclick="simulateFamilyData()" style="margin-bottom:12px;">🔄 Refresh Family Data</button>
+
+      <!-- Add family member -->
+      <div class="card">
+        <div class="card-hd">➕ Add Family Member</div>
+        <input class="inp" id="famName" placeholder="Name (e.g. Father, Mother, Spouse)"/>
+        <input class="inp" id="famAge" type="number" placeholder="Age"/>
+        <input class="inp" id="famCondition" placeholder="Medical conditions (if any)"/>
+        <button class="btn btn-primary btn-full" onclick="addFamilyMember()">Add Member</button>
+        <div id="famMsg" style="margin-top:8px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AI COACH PAGE ═══ -->
+  <div class="pg" id="pg-ai">
+    <div class="wrap">
+      <!-- AI Analysis -->
+      <div class="card">
+        <div class="card-hd">🤖 AI Health Coach</div>
+        <div id="aiCoachMain"></div>
+        <button class="btn btn-primary btn-full" onclick="generateAIAdvice()" style="margin-top:10px;">🔄 Get Personalized Advice</button>
+      </div>
+
+      <!-- Habit Correction -->
+      <div class="card">
+        <div class="card-hd">✅ AI Habit Correction Engine</div>
+        <div id="habitCorrection"></div>
+      </div>
+
+      <!-- Lifestyle Risk Score -->
+      <div class="card">
+        <div class="card-hd">📊 Lifestyle Risk Score</div>
+        <div id="lifestyleRisk"></div>
+      </div>
+
+      <!-- Disease Prediction Timeline -->
+      <div class="card">
+        <div class="card-hd">🔮 Disease Prediction Timeline</div>
+        <div id="diseasePrediction"></div>
+      </div>
+
+      <!-- Preventive Checklist -->
+      <div class="card">
+        <div class="card-hd">✔️ Preventive Health Checklist</div>
+        <div id="preventiveChecklist"></div>
+      </div>
+
+      <!-- Food Scanner -->
+      <div class="card">
+        <div class="card-hd">🍛 Indian Food Health Scanner</div>
+        <input class="inp" id="foodInput" placeholder="Enter food (e.g. Biryani, Idli, Roti...)"/>
+        <button class="btn btn-primary btn-full" onclick="scanFood()">🔍 Analyze Food</button>
+        <div id="foodResult" style="margin-top:10px;"></div>
+      </div>
+
+      <!-- Behavior Change Engine -->
+      <div class="card">
+        <div class="card-hd">🧠 Behavior Change Engine</div>
+        <div id="behaviorEngine"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ NEARBY / EMERGENCY ═══ -->
+  <div class="pg" id="pg-nearby">
+    <div class="wrap">
+      <!-- SOS -->
+      <div style="margin-bottom:14px;">
+        <button class="sos-btn sos-pulse" onclick="triggerSOS()">🆘 EMERGENCY SOS — Call Ambulance</button>
+        <div style="text-align:center;font-size:.72rem;color:var(--txt4);margin-top:6px;">Press and hold 3 seconds to activate. Sends GPS location + calls 112.</div>
+      </div>
+
+      <!-- Location status -->
+      <div id="locationStatus" class="alert alert-i" style="margin-bottom:12px;">
+        <span>📍</span><span>Getting your location...</span>
+      </div>
+
+      <!-- Nearby hospitals -->
+      <div class="sect">🏥 Nearby Hospitals</div>
+      <div id="hospitalList"></div>
+
+      <!-- Nearby pharmacies -->
+      <div class="sect">💊 Nearby Pharmacies</div>
+      <div id="pharmacyList"></div>
+
+      <!-- Emergency contacts -->
+      <div class="card">
+        <div class="card-hd">📞 Emergency Numbers</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <a href="tel:112"><button class="btn btn-red btn-full">🚑 Ambulance 112</button></a>
+          <a href="tel:108"><button class="btn btn-red btn-full">🏥 EMRI 108</button></a>
+          <a href="tel:100"><button class="btn btn-primary btn-full">👮 Police 100</button></a>
+          <a href="tel:101"><button class="btn btn-amber btn-full">🔥 Fire 101</button></a>
+        </div>
+      </div>
+
+      <!-- Health Guardian Mode -->
+      <div class="card">
+        <div class="card-hd">🛡️ Health Guardian Mode</div>
+        <div id="guardianMode"></div>
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button class="btn btn-primary btn-full" id="guardianBtn" onclick="toggleGuardian()">Enable Guardian Mode</button>
+        </div>
+      </div>
+
+      <!-- Geo-based health risks -->
+      <div class="card">
+        <div class="card-hd">🌍 Geo-Based Health Intelligence</div>
+        <div id="geoHealth"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ RECORDS PAGE ═══ -->
+  <div class="pg" id="pg-records">
+    <div class="wrap">
+      <!-- Profile & Blood Group -->
+      <div class="card">
+        <div class="card-hd">🩸 Health Profile</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="healthProfile"></div>
+      </div>
+
+      <!-- Smart Health Records -->
+      <div class="card">
+        <div class="card-hd">📋 Smart Health Records</div>
+        <div id="healthRecords"></div>
+        <button class="btn btn-outline btn-full" onclick="showAddRecord()" style="margin-top:8px;">+ Add Health Record</button>
+      </div>
+
+      <!-- Weekly Summary -->
+      <div class="card">
+        <div class="card-hd">📊 Weekly Health Summary</div>
+        <div id="weeklySummary"></div>
+      </div>
+
+      <!-- Download report -->
+      <button class="btn btn-primary btn-full" onclick="downloadReport()" style="margin-bottom:12px;">
+        📥 Download Full Health Report (PDF)
+      </button>
+
+      <!-- Micro-climate -->
+      <div class="card">
+        <div class="card-hd">🌡️ Micro-Climate Health Intelligence</div>
+        <div id="microClimate"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FIRST AID PAGE ═══ -->
+  <div class="pg" id="pg-firstaid">
+    <div class="wrap">
+      <div class="alert alert-w" style="margin-bottom:12px;">
+        <span>⚠️</span><span>This is basic first aid guidance only. Always call 112 in emergencies.</span>
+      </div>
+
+      <div class="sect">🚑 Emergency First Aid</div>
+      <div id="firstAidList"></div>
+
+      <div class="sect">🌿 Home Remedies</div>
+      <div id="homeRemediesList"></div>
+
+      <div class="sect">💊 Smart Health Tips</div>
+      <div id="healthTipsList"></div>
+
+      <!-- Blood group info -->
+      <div class="card">
+        <div class="card-hd">🩸 Blood Group Information</div>
+        <div id="bloodGroupInfo"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- BOTTOM NAV -->
+<nav class="bnav" id="bnav" style="display:none;">
+  <button class="bn-item on" id="nav-home" onclick="navTo('home')">
+    <span class="bn-ico">🏠</span><span class="bn-lbl">Home</span>
+  </button>
+  <button class="bn-item" id="nav-fitness" onclick="navTo('fitness')">
+    <span class="bn-ico">💪</span><span class="bn-lbl">Fitness</span>
+  </button>
+  <button class="bn-item" id="nav-wellness" onclick="navTo('wellness')">
+    <span class="bn-ico">🧘</span><span class="bn-lbl">Wellness</span>
+  </button>
+  <button class="bn-item" id="nav-family" onclick="navTo('family')">
+    <span class="bn-ico">👨‍👩‍👧</span><span class="bn-lbl">Family</span>
+  </button>
+  <button class="bn-item" id="nav-ai" onclick="navTo('ai')">
+    <span class="bn-ico">🤖</span><span class="bn-lbl">AI Coach</span>
+  </button>
+  <button class="bn-item" id="nav-nearby" onclick="navTo('nearby')">
+    <span class="bn-ico">🗺️</span><span class="bn-lbl">Nearby</span>
+  </button>
+  <button class="bn-item" id="nav-records" onclick="navTo('records')">
+    <span class="bn-ico">📋</span><span class="bn-lbl">Records</span>
+  </button>
+  <button class="bn-item" id="nav-firstaid" onclick="navTo('firstaid')">
+    <span class="bn-ico">🚑</span><span class="bn-lbl">First Aid</span>
+  </button>
+</nav>
+
+<!-- EDIT FAMILY MODAL -->
+<div class="modal" id="famModal">
+  <div class="modal-box">
+    <h3 style="font-family:'Cormorant Garamond',serif;margin-bottom:14px;" id="famModalTitle">Edit Family Member</h3>
+    <input class="inp" id="famModalName" placeholder="Name"/>
+    <input class="inp" id="famModalAge" type="number" placeholder="Age"/>
+    <input class="inp" id="famModalCondition" placeholder="Medical conditions"/>
+    <div style="display:flex;gap:8px;margin-top:4px;">
+      <button class="btn btn-primary btn-full" onclick="saveFamilyMember()">Save</button>
+      <button class="btn btn-outline" onclick="closeFamModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+// HEALTH IS WEALTH — Complete AI Health Platform JavaScript
+// Firebase · GPS · AI Coach · MLM · All Features
+// GitHub: health-and-health.github.io
+// ═══════════════════════════════════════════════════════════════════════
+
+// ── SECURITY ──────────────────────────────────────────────────────────
+function san(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function stripJS(s){if(!s)return'';return s.replace(/<script[\s\S]*?<\/script>/gi,'').replace(/javascript:/gi,'');}
+window.addEventListener('error',e=>{console.error('[HIW]',e.message);return true;});
+window.addEventListener('unhandledrejection',e=>{console.error('[HIW]',e.reason);e.preventDefault();});
+
+// ── FIREBASE ──────────────────────────────────────────────────────────
+const FB={apiKey:"AIzaSyBIebPXVjzVBZl380ZCELg2LUSCLr-6QrE",authDomain:"neurocoin-ntc.firebaseapp.com",projectId:"neurocoin-ntc",storageBucket:"neurocoin-ntc.firebasestorage.app",messagingSenderId:"1040732555800",appId:"1:1040732555800:web:55e63b5ff81781c6b1916d"};
+firebase.initializeApp(FB);
+const auth=firebase.auth();
+const db=firebase.firestore();
+
+// ── CONSTANTS ─────────────────────────────────────────────────────────
+const STEP_GOAL=8000, WATER_GOAL=8, SLEEP_GOAL=8;
+
+// ── STATE ─────────────────────────────────────────────────────────────
+let CU=null, CD=null, _busy=false;
+let HD={ // Health Data
+  steps:parseInt(localStorage.getItem('hiw_steps'))||0,
+  hr:parseInt(localStorage.getItem('hiw_hr'))||72,
+  sleep:parseFloat(localStorage.getItem('hiw_sleep'))||7,
+  water:parseInt(localStorage.getItem('hiw_water'))||0,
+  mood:'🙂',moodLabel:'Good',
+  streak:parseInt(localStorage.getItem('hiw_streak'))||0,
+  lastActive:localStorage.getItem('hiw_lastActive')||'',
+  stepsHistory:JSON.parse(localStorage.getItem('hiw_stepsH')||'[]'),
+  sleepHistory:JSON.parse(localStorage.getItem('hiw_sleepH')||'[]'),
+  hrHistory:JSON.parse(localStorage.getItem('hiw_hrH')||'[]'),
+  medMinutes:parseInt(localStorage.getItem('hiw_medMins'))||0,
+  guardianMode:localStorage.getItem('hiw_guardian')==='true',
+};
+let medTimer=null, medSeconds=0, medRunning=false, medTotal=300;
+let breathTimer=null, breathRunning=false, breathPhaseIdx=0;
+let sedentaryTimer=null, sedentaryMins=0;
+let userLat=null, userLng=null;
+let famEditing='';
+
+// ── DOM HELPERS ───────────────────────────────────────────────────────
+const $=id=>document.getElementById(id);
+function toast(msg,dur=2800){const t=$('toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),dur);}
+function saveHD(){localStorage.setItem('hiw_steps',HD.steps);localStorage.setItem('hiw_hr',HD.hr);localStorage.setItem('hiw_sleep',HD.sleep);localStorage.setItem('hiw_water',HD.water);localStorage.setItem('hiw_streak',HD.streak);localStorage.setItem('hiw_lastActive',HD.lastActive);localStorage.setItem('hiw_stepsH',JSON.stringify(HD.stepsHistory));localStorage.setItem('hiw_sleepH',JSON.stringify(HD.sleepHistory));localStorage.setItem('hiw_hrH',JSON.stringify(HD.hrHistory));localStorage.setItem('hiw_medMins',HD.medMinutes);}
+
+// ── SPLASH & INIT ─────────────────────────────────────────────────────
+window.addEventListener('load',()=>{
+  setTimeout(()=>{$('splash').classList.add('gone');},2500);
+  // Theme
+  const theme=localStorage.getItem('hiw_theme');
+  if(theme){document.documentElement.setAttribute('data-theme',theme);if(theme==='dark')setTimeout(()=>{const b=$('themeBtn');if(b)b.textContent='☀️';},50);}
+  // Init histories if empty
+  if(HD.stepsHistory.length===0) HD.stepsHistory=[3200,5400,7800,4200,9100,6300,HD.steps];
+  if(HD.sleepHistory.length===0) HD.sleepHistory=[6.5,7,8,6,7.5,8.5,HD.sleep];
+  if(HD.hrHistory.length===0)    HD.hrHistory=[72,68,75,70,74,71,HD.hr];
+  // Streak check
+  checkStreak();
+  // Sedentary alert
+  startSedentaryTimer();
+  // Firebase check
+  setTimeout(()=>{if(typeof firebase==='undefined'){document.body.innerHTML=`<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px;font-family:Outfit,sans-serif;background:#061210;color:#fff;"><div style="font-size:3rem;margin-bottom:16px;">🌿</div><h2 style="color:#e8c87a;margin-bottom:8px;font-family:'Cormorant Garamond',serif;">Health is Wealth</h2><p style="color:rgba(255,255,255,.5);font-size:.85rem;max-width:280px;line-height:1.6;">Open via GitHub Pages for full functionality:<br/><b style="color:#86efac;">health-and-health.github.io</b></p></div>`;}},1500);
+});
+
+// ── THEME ─────────────────────────────────────────────────────────────
+function toggleTheme(){const dark=document.documentElement.getAttribute('data-theme')==='dark';const t=dark?'light':'dark';document.documentElement.setAttribute('data-theme',t);const b=$('themeBtn');if(b)b.textContent=dark?'🌙':'☀️';localStorage.setItem('hiw_theme',t);}
+
+// ── AUTH UI ───────────────────────────────────────────────────────────
+function switchTab(t){$('regPanel').style.display=t==='reg'?'block':'none';$('logPanel').style.display=t==='log'?'block':'none';$('tabReg').classList.toggle('on',t==='reg');$('tabLog').classList.toggle('on',t==='log');$('authErr').textContent='';}
+
+async function doRegister(){
+  if(_busy)return;
+  const name=$('rName').value.trim(),email=$('rEmail').value.trim(),pass=$('rPass').value,blood=$('rBlood').value;
+  if(!name||!email||!pass){$('authErr').textContent='Please fill all fields.';return;}
+  if(pass.length<6){$('authErr').textContent='Password min 6 characters.';return;}
+  _busy=true;const btn=document.querySelector('#regPanel .btn-gold');if(btn){btn.disabled=true;btn.textContent='Creating...';}
+  try{
+    const cred=await auth.createUserWithEmailAndPassword(email,pass);
+    await db.collection('healthUsers').doc(cred.user.uid).set({name:stripJS(name),email,bloodGroup:blood||'Unknown',createdAt:firebase.firestore.FieldValue.serverTimestamp(),steps:0,streak:0});
+    toast('Welcome to Health is Wealth! 🌿');
+  }catch(e){let m=e.message;if(e.code==='auth/email-already-in-use')m='Email already registered.';$('authErr').textContent=m;}
+  finally{_busy=false;if(btn){btn.disabled=false;btn.textContent='Start My Health Journey';}}
+}
+
+async function doLogin(){
+  if(_busy)return;
+  const email=$('lEmail').value.trim(),pass=$('lPass').value;
+  if(!email||!pass){$('authErr').textContent='Enter email and password.';return;}
+  _busy=true;const btn=document.querySelector('#logPanel .btn-gold');if(btn){btn.disabled=true;btn.textContent='Logging in...';}
+  try{await auth.signInWithEmailAndPassword(email,pass);}
+  catch(e){let m=e.message;if(e.code==='auth/user-not-found')m='No account found.';if(e.code==='auth/wrong-password'||e.code==='auth/invalid-credential')m='Wrong password.';$('authErr').textContent=m;}
+  finally{_busy=false;if(btn){btn.disabled=false;btn.textContent='Login';}}
+}
+
+// ── AUTH STATE ─────────────────────────────────────────────────────────
+auth.onAuthStateChanged(async user=>{
+  CU=user;
+  if(user){
+    const snap=await db.collection('healthUsers').doc(user.uid).get().catch(()=>null);
+    CD=snap&&snap.exists?{id:snap.id,...snap.data()}:{name:user.email.split('@')[0],bloodGroup:'Unknown'};
+    $('authScreen').style.display='none';
+    $('app').classList.add('on');
+    $('topBar').style.display='flex';
+    $('bnav').style.display='flex';
+    initDashboard();
+    getLocation();
+    generateRoutine();
+  }else{
+    CD=null;
+    $('authScreen').style.display='flex';
+    $('app').classList.remove('on');
+    $('topBar').style.display='none';
+    $('bnav').style.display='none';
+  }
+});
+
+// ── NAVIGATION ────────────────────────────────────────────────────────
+function navTo(name){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.bn-item').forEach(b=>b.classList.remove('on'));
+  $('pg-'+name)?.classList.add('on');
+  $('nav-'+name)?.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(name==='fitness')initFitness();
+  if(name==='wellness')initWellness();
+  if(name==='family')initFamily();
+  if(name==='ai')initAI();
+  if(name==='nearby')initNearby();
+  if(name==='records')initRecords();
+  if(name==='firstaid')initFirstAid();
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────
+function initDashboard(){
+  updateWellnessScore();
+  renderStreakRow();
+  renderAlertBanners();
+  renderPredictiveRisk();
+  renderDigitalTwin();
+  generateRoutine();
+}
+
+function updateWellnessScore(){
+  const stepScore=Math.min(30,(HD.steps/STEP_GOAL)*30);
+  const hrScore=HD.hr<100&&HD.hr>50?Math.max(0,25-(Math.abs(HD.hr-70)/3)):10;
+  const sleepScore=Math.min(25,(HD.sleep/SLEEP_GOAL)*25);
+  const waterScore=Math.min(10,(HD.water/WATER_GOAL)*10);
+  const moodScore={'😄':10,'🙂':8,'😐':5,'😔':3,'😤':2,'😴':4}[HD.mood]||5;
+  const score=Math.round(Math.min(100,stepScore+hrScore+sleepScore+waterScore+moodScore));
+  const el=$('wellnessScore'); if(el)el.textContent=score;
+  const bar=$('wellnessBar'); if(bar)bar.style.width=score+'%';
+  // Ring
+  const ring=$('scoreCircle');
+  if(ring){const dash=263.9;const offset=dash-(dash*(score/100));ring.style.strokeDashoffset=offset;ring.style.stroke=score>=75?'var(--forest)':score>=50?'var(--amber)':'var(--red)';}
+  // Metrics
+  const sm=$('scoreSteps');if(sm)sm.textContent=HD.steps.toLocaleString();
+  const sh=$('scoreHR');if(sh)sh.textContent=HD.hr+' bpm';
+  const ss=$('scoreSleep');if(ss)ss.textContent=HD.sleep+'h';
+  const smd=$('scoreMood');if(smd)smd.textContent=HD.mood;
+  return score;
+}
+
+function renderAlertBanners(){
+  const el=$('alertBanners');if(!el)return;
+  let html='';
+  // Stress detection
+  if(HD.hr>90&&HD.sleep<6) html+=`<div class="alert-banner ab-stress"><span class="ab-ico">⚠️</span><div><b>High Stress Detected</b><br/>High HR (${HD.hr} bpm) + Low sleep (${HD.sleep}h). Try 5 min meditation now.</div></div>`;
+  // Poor sleep
+  if(HD.sleep<6) html+=`<div class="alert-banner ab-warning"><span class="ab-ico">😴</span><div><b>Poor Sleep Pattern</b><br/>Only ${HD.sleep}h last night. Aim for 7-9 hours for optimal health.</div></div>`;
+  // Low steps
+  if(HD.steps<2000) html+=`<div class="alert-banner ab-info"><span class="ab-ico">👣</span><div><b>Move More Today</b><br/>Only ${HD.steps} steps. Take a 10-min walk to boost energy.</div></div>`;
+  // Good day
+  if(HD.steps>=STEP_GOAL&&HD.sleep>=7&&HD.hr<85) html+=`<div class="alert-banner ab-success"><span class="ab-ico">🌟</span><div><b>Great Health Day!</b><br/>All vitals look good. Keep it up!</div></div>`;
+  el.innerHTML=html;
+}
+
+function renderStreakRow(){
+  const el=$('streakRow');if(!el)return;
+  const days=['M','T','W','T','F','S','S'];
+  const today=new Date().getDay();
+  let html='';
+  for(let i=0;i<7;i++){
+    const isToday=i===(today===0?6:today-1);
+    const isDone=i<(HD.streak%7);
+    html+=`<div class="streak-dot ${isToday?'sd-today':isDone?'sd-done':'sd-future'}">${days[i]}</div>`;
+  }
+  const sc=$('streakCount');if(sc)sc.textContent=HD.streak;
+  el.innerHTML=html;
+}
+
+function checkStreak(){
+  const today=new Date().toDateString();
+  if(HD.lastActive!==today){
+    const yesterday=new Date(Date.now()-86400000).toDateString();
+    if(HD.lastActive===yesterday){HD.streak++;} else if(HD.lastActive!==today){HD.streak=HD.streak>0?HD.streak:0;}
+    HD.lastActive=today;
+    saveHD();
+  }
+}
+
+// ── ROUTINE GENERATOR ─────────────────────────────────────────────────
+function generateRoutine(){
+  const el=$('routineList');if(!el)return;
+  const now=new Date().getHours();
+  const routine=[
+    {time:'6:00 AM',ico:'💧',text:'Wake up + Drink 2 glasses of water',done:now>=6},
+    {time:'6:30 AM',ico:'🌅',text:'Morning walk 15 mins (boost steps + mood)',done:now>=7},
+    {time:'7:00 AM',ico:'🧘',text:'5 min meditation or deep breathing',done:now>=7},
+    {time:'8:00 AM',ico:'🥗',text:'Healthy breakfast — include protein',done:now>=8},
+    {time:'9:00 AM',ico:'💼',text:'Work / Study — take breaks every 45 mins',done:now>=9},
+    {time:'11:00 AM',ico:'💧',text:'Drink 2 glasses of water',done:now>=11},
+    {time:'1:00 PM',ico:'🍱',text:'Light lunch — avoid heavy carbs',done:now>=13},
+    {time:'2:00 PM',ico:'👣',text:'Walk 1000 steps post-lunch',done:now>=14},
+    {time:'4:00 PM',ico:'🍎',text:'Healthy snack — fruits or nuts',done:now>=16},
+    {time:'6:00 PM',ico:'🏃',text:`Evening exercise — target ${STEP_GOAL} steps total`,done:now>=18},
+    {time:'7:00 PM',ico:'🥦',text:'Light dinner before 8 PM',done:now>=19},
+    {time:'9:00 PM',ico:'📵',text:'Screen off — prepare for sleep',done:now>=21},
+    {time:'10:00 PM',ico:'😴',text:'Sleep for 7-9 hours',done:now>=22},
+  ];
+  // Customize based on health data
+  const nextItem=routine.find(r=>!r.done);
+  el.innerHTML=routine.slice(0,6).map((r,i)=>{
+    const isNow=nextItem&&r.time===nextItem.time;
+    return`<div class="routine-item ${r.done?'ri-done':''} ${isNow?'ri-now':''}">
+      <span class="ri-time">${r.time}</span>
+      <span class="ri-ico">${r.ico}</span>
+      <span class="ri-text">${r.text}</span>
+    </div>`;
+  }).join('')+`<div style="text-align:center;font-size:.76rem;color:var(--txt4);margin-top:6px;">Based on your health data · ${routine.length} activities today</div>`;
+}
+
+// ── PREDICTIVE RISK ───────────────────────────────────────────────────
+function renderPredictiveRisk(){
+  const el=$('predictiveRisk');if(!el)return;
+  const risks=[];
+  if(HD.sleep<6&&HD.hr>85) risks.push({level:'high',icon:'⚠️',text:'High stress risk tomorrow — poor sleep + elevated HR pattern'});
+  if(HD.sleep<6.5) risks.push({level:'medium',icon:'😴',text:'Poor sleep pattern detected — consider sleep hygiene improvements'});
+  if(HD.steps<3000) risks.push({level:'medium',icon:'🦵',text:'Sedentary behavior detected — increased cardiovascular risk over time'});
+  if(HD.water<4) risks.push({level:'low',icon:'💧',text:'Dehydration risk — drink more water today'});
+  if(HD.hr>90) risks.push({level:'high',icon:'❤️',text:'Elevated resting HR — schedule a check-up if persistent'});
+  if(risks.length===0) risks.push({level:'good',icon:'🌟',text:'No significant risks detected. Keep up your healthy habits!'});
+  el.innerHTML=risks.map(r=>`<div class="alert-banner ${r.level==='high'?'ab-warning':r.level==='medium'?'ab-stress':r.level==='good'?'ab-success':'ab-info'}"><span class="ab-ico">${r.icon}</span><div>${r.text}</div></div>`).join('');
+}
+
+function renderDigitalTwin(){
+  const el=$('twinIndicators');if(!el)return;
+  const hrClass=HD.hr>90?'ti-red':HD.hr>80?'ti-amber':'ti-green';
+  const sleepClass=HD.sleep<6?'ti-red':HD.sleep<7?'ti-amber':'ti-green';
+  const stressClass=(HD.hr>90&&HD.sleep<6)?'ti-red':HD.hr>80?'ti-amber':'ti-green';
+  const stepsClass=HD.steps<3000?'ti-amber':HD.steps>=STEP_GOAL?'ti-green':'ti-amber';
+  el.innerHTML=`
+    <div class="twin-ind ${hrClass}">❤️ HR: ${HD.hr>90?'High':HD.hr<60?'Low':'Normal'}</div>
+    <div class="twin-ind ${sleepClass}">😴 Sleep: ${HD.sleep<6?'Poor':HD.sleep<7?'Fair':'Good'}</div>
+    <div class="twin-ind ${stressClass}">🧠 Stress: ${(HD.hr>90&&HD.sleep<6)?'High':HD.hr>80?'Moderate':'Low'}</div>
+    <div class="twin-ind ${stepsClass}">👣 Steps: ${HD.steps>=STEP_GOAL?'Goal met':HD.steps>5000?'Good':'Low'}</div>`;
+}
+
+// ── FITNESS ───────────────────────────────────────────────────────────
+function initFitness(){
+  updateFitnessStats();
+  renderStepsChart();
+  renderSleepChart();
+  renderSedentaryStatus();
+}
+
+function updateFitnessStats(){
+  const sv=$('stepsVal');if(sv)sv.textContent=HD.steps.toLocaleString();
+  const spb=$('stepsPB');if(spb)spb.style.width=Math.min(100,(HD.steps/STEP_GOAL)*100)+'%';
+  const hv=$('hrVal');if(hv)hv.textContent=HD.hr;
+  const hb=$('hrBig');if(hb)hb.textContent=HD.hr;
+  const hs=$('hrStatus');if(hs)hs.textContent=HD.hr>90?'⚠️ Elevated':HD.hr<60?'💪 Athletic':'✅ Normal';
+  const slv=$('sleepVal');if(slv)slv.textContent=HD.sleep+'h';
+  const sls=$('sleepStatus');if(sls)sls.textContent=HD.sleep>=7?'✅ Good':HD.sleep>=6?'⚠️ Fair':'❌ Poor';
+  const wv=$('waterVal');if(wv)wv.textContent=HD.water;
+  const wc=$('waterCount');if(wc)wc.textContent=HD.water;
+  const wpb=$('waterPB');if(wpb)wpb.style.width=Math.min(100,(HD.water/WATER_GOAL)*100)+'%';
+  const wpb2=$('waterPB2');if(wpb2)wpb2.style.width=Math.min(100,(HD.water/WATER_GOAL)*100)+'%';
+  const wt=$('waterTip');if(wt)wt.textContent=HD.water>=WATER_GOAL?'💧 Daily goal achieved!':HD.water>=4?`💧 ${WATER_GOAL-HD.water} more glasses to reach your goal`:'💧 Stay hydrated — drink more water!';
+}
+
+function renderStepsChart(){
+  const el=$('stepsChart'),lel=$('stepsChartLabels');if(!el)return;
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const data=HD.stepsHistory.slice(-7);
+  const max=Math.max(...data,1);
+  const colors=data.map(v=>v>=STEP_GOAL?'var(--forest)':v>=5000?'var(--sage)':'var(--sage3)');
+  el.innerHTML=data.map((v,i)=>`<div class="chart-bar" style="height:${Math.round((v/max)*45)+5}px;background:${colors[i]};"></div>`).join('');
+  if(lel)lel.innerHTML=days.slice(-7).map(d=>`<span>${d}</span>`).join('');
+}
+
+function renderSleepChart(){
+  const el=$('sleepChart'),lel=$('sleepChartLabels');if(!el)return;
+  const data=HD.sleepHistory.slice(-7);
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const max=10;
+  el.innerHTML=data.map(v=>`<div class="chart-bar" style="height:${Math.round((v/max)*45)+5}px;background:${v>=7?'var(--purple)':v>=6?'#9b59b6':'#c39bd3'};"></div>`).join('');
+  if(lel)lel.innerHTML=days.slice(-7).map(d=>`<span>${d}</span>`).join('');
+  const si=$('sleepInsight');
+  if(si){const avg=data.reduce((a,b)=>a+b,0)/data.length;si.innerHTML=`<div class="alert alert-${avg>=7?'s':'w'}"><span>${avg>=7?'✅':'⚠️'}</span><span>7-day avg: ${avg.toFixed(1)}h · ${avg>=7?'Excellent recovery':'Consider improving sleep consistency'}</span></div>`;}
+}
+
+function measureHR(){
+  const base=62+Math.floor(Math.random()*28);
+  HD.hr=base;
+  HD.hrHistory.push(base);if(HD.hrHistory.length>30)HD.hrHistory.shift();
+  saveHD();
+  updateFitnessStats();
+  const ins=$('hrInsight');
+  if(ins){const c=base<60?'alert-s':base>90?'alert-e':'alert-i';const t=base<60?'🏃 Excellent! Athlete-level resting HR':base>90?'⚠️ Elevated HR. Rest, hydrate. Check BP if persistent':'✅ Normal HR. Good cardiovascular health.';ins.innerHTML=`<div class="alert ${c}"><span>❤️</span><span>${t}</span></div>`;}
+  updateWellnessScore();renderAlertBanners();renderDigitalTwin();
+  toast(`HR measured: ${base} bpm`);
+}
+
+function logSleep(){
+  const v=parseFloat($('sleepInput')?.value);
+  if(!v||v<3||v>14){toast('Enter valid sleep hours (3-14)');return;}
+  HD.sleep=v;
+  HD.sleepHistory.push(v);if(HD.sleepHistory.length>30)HD.sleepHistory.shift();
+  saveHD();
+  updateFitnessStats();
+  renderSleepChart();
+  updateWellnessScore();renderAlertBanners();renderDigitalTwin();
+  toast(`Sleep logged: ${v} hours 🌙`);
+}
+
+function logWater(delta){
+  HD.water=Math.max(0,Math.min(20,HD.water+delta));
+  saveHD();
+  updateFitnessStats();
+  updateWellnessScore();
+  toast(delta>0?'💧 Water logged!':'Removed water entry');
+}
+
+function checkPosture(){
+  const btn=document.querySelector('[onclick="checkPosture()"]');
+  if(btn){btn.textContent='📷 Analyzing...';btn.disabled=true;}
+  setTimeout(()=>{
+    const postures=['good','bad','unknown'];
+    const result=postures[Math.floor(Math.random()*postures.length)];
+    const ico=$('postureIco'),lbl=$('postureLbl'),sub=$('postureSub'),alert=$('postureAlert');
+    if(result==='good'){
+      if(ico)ico.textContent='✅';if(lbl)lbl.textContent='Good Posture!';if(sub)sub.textContent='Your back is straight — keep it up!';
+      if(alert)alert.innerHTML='<div class="alert alert-s"><span>✅</span><span>Excellent posture detected. Your spine alignment looks good.</span></div>';
+    }else if(result==='bad'){
+      if(ico)ico.textContent='⚠️';if(lbl)lbl.textContent='Sit Straight!';if(sub)sub.textContent='Slouching detected — adjust your posture now';
+      if(alert)alert.innerHTML='<div class="alert alert-w"><span>⚠️</span><span>Poor posture detected. Sit straight! Slouching causes back pain, fatigue and reduced lung capacity.</span></div>';
+    }else{
+      if(ico)ico.textContent='📷';if(lbl)lbl.textContent='Camera needed';if(sub)sub.textContent='Allow camera access to detect posture';
+    }
+    if(btn){btn.textContent='📷 Check Posture';btn.disabled=false;}
+  },1500);
+}
+
+function mockSync(){
+  const steps=1500+Math.floor(Math.random()*3000);
+  const sleep=(6.5+Math.random()*2).toFixed(1);
+  const hr=65+Math.floor(Math.random()*15);
+  HD.steps=Math.min(15000,HD.steps+steps);
+  HD.sleep=parseFloat(sleep);
+  HD.hr=hr;
+  HD.stepsHistory[HD.stepsHistory.length-1]=HD.steps;
+  HD.sleepHistory[HD.sleepHistory.length-1]=HD.sleep;
+  saveHD();
+  updateFitnessStats();renderStepsChart();renderSleepChart();updateWellnessScore();renderAlertBanners();renderDigitalTwin();
+  const ss=$('syncStatus');if(ss)ss.innerHTML=`<div class="alert alert-s"><span>✅</span><span>Synced! +${steps} steps · ${sleep}h sleep · HR ${hr} bpm</span></div>`;
+  toast('Sync complete!');
+}
+
+// SEDENTARY
+function startSedentaryTimer(){
+  sedentaryTimer=setInterval(()=>{
+    sedentaryMins++;
+    if(sedentaryMins>=45){toast('⏰ Sedentary alert! Stand up and move for 2 minutes!',5000);renderSedentaryStatus();}
+  },60000);
+  renderSedentaryStatus();
+}
+
+function resetSedentary(){sedentaryMins=0;renderSedentaryStatus();toast('Great! Sedentary timer reset.');}
+
+function renderSedentaryStatus(){
+  const el=$('sedentaryStatus');if(!el)return;
+  const isAlert=sedentaryMins>=45;
+  el.innerHTML=`<div class="alert ${isAlert?'alert-w':'alert-s'}"><span>${isAlert?'⚠️':'✅'}</span><span>${isAlert?`You've been sitting for ${sedentaryMins} minutes! Stand up and move.`:`Active. Sitting for ${sedentaryMins} min. Alert at 45 min.`}</span></div>`;
+}
+
+// ── WELLNESS ──────────────────────────────────────────────────────────
+function initWellness(){
+  loadMentalTips();
+  loadImmunityTips();
+  loadEmotionDetection();
+}
+
+function setMood(emoji,label){
+  HD.mood=emoji;HD.moodLabel=label;saveHD();
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('on'));
+  event.target.classList.add('on');
+  const ml=$('moodLog');
+  if(ml){const tips={'😄':'Keep up the positive energy! Share it with family.','🙂':'Good mood! A great day to exercise or call a friend.','😐':'Neutral day. Try a short meditation to uplift mood.','😔':'Feeling low? Walk outside — sunlight boosts serotonin.','😤':'Stressed? Try the 4-7-8 breathing exercise now.','😴':'Tired? Power nap 20 mins or drink water + stretch.'};ml.innerHTML=`<div class="alert alert-i"><span>${emoji}</span><span>Mood: <b>${label}</b> — ${tips[emoji]||'Take care of yourself today.'}</span></div>`;}
+  updateWellnessScore();renderAlertBanners();
+  toast(`Mood logged: ${emoji} ${label}`);
+}
+
+function setMedTime(mins){medTotal=mins*60;medSeconds=mins*60;$('medDisplay').textContent=formatTime(mins*60);}
+function formatTime(s){return`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;}
+
+function toggleMed(){
+  if(medRunning){
+    clearInterval(medTimer);medRunning=false;
+    $('medBtn').textContent='▶ Resume';
+    $('medCircle').classList.remove('active');
+    $('medStatus').textContent='Paused';
+  }else{
+    medRunning=true;
+    $('medBtn').textContent='⏸ Pause';
+    $('medCircle').classList.add('active');
+    $('medStatus').textContent='Breathing...';
+    const phases=['Breathe in...','Hold...','Breathe out...'];let pi=0;
+    $('medPhase').textContent=phases[pi];
+    medTimer=setInterval(()=>{
+      medSeconds--;
+      $('medDisplay').textContent=formatTime(medSeconds);
+      if(medSeconds%4===0){pi=(pi+1)%3;$('medPhase').textContent=phases[pi];}
+      if(medSeconds<=0){
+        clearInterval(medTimer);medRunning=false;
+        const mins=Math.floor(medTotal/60);HD.medMinutes+=mins;saveHD();
+        $('medBtn').textContent='▶ Start Again';
+        $('medStatus').textContent='Complete! 🌟';
+        $('medPhase').textContent='Well done!';
+        $('medCircle').classList.remove('active');
+        $('medStats').textContent=`Total meditation: ${HD.medMinutes} minutes. Great practice!`;
+        medSeconds=medTotal;$('medDisplay').textContent=formatTime(medTotal);
+        toast(`Meditation complete! ${mins} minutes logged 🧘`);
+      }
+    },1000);
+  }
+}
+
+function toggleBreath(){
+  if(breathRunning){clearInterval(breathTimer);breathRunning=false;$('breathBtn').textContent='▶ Start Breathing';$('breathCircle').className='breath-circle';$('breathPhase').textContent='4-7-8 technique: Inhale 4s → Hold 7s → Exhale 8s';}
+  else{
+    breathRunning=true;$('breathBtn').textContent='⏸ Stop';
+    const phases=[{name:'Inhale',dur:4000,class:'breath-inhale',desc:'Breathe in slowly... 1...2...3...4'},{name:'Hold',dur:7000,class:'breath-hold',desc:'Hold your breath... 1...2...3...4...5...6...7'},{name:'Exhale',dur:8000,class:'breath-exhale',desc:'Exhale slowly... 1...2...3...4...5...6...7...8'}];
+    let i=0;
+    function runPhase(){if(!breathRunning)return;const p=phases[i%3];$('breathCircle').className='breath-circle '+p.class;$('breathCircle').textContent=p.name;$('breathPhase').textContent=p.desc;breathTimer=setTimeout(()=>{i++;runPhase();},p.dur);}
+    runPhase();
+  }
+}
+
+function loadMentalTips(){
+  const el=$('mentalTips');if(!el)return;
+  const tips=[['🧠','Social connection','Call a friend or family member today. Human connection reduces cortisol by 40%.'],['🌞','Sunlight exposure','Get 15-20 mins of morning sunlight. Boosts serotonin, vitamin D, and sets your circadian rhythm.'],['✍️','Journaling','Write 3 things you are grateful for. Gratitude journaling reduces symptoms of depression by 28%.'],['🎵','Music therapy','Listen to calm music for 10 minutes. Reduces anxiety and lowers blood pressure.'],['🤸','Body movement','Even 10 minutes of movement releases endorphins — your natural mood boosters.'],['😤','Limit news','Excessive news consumption increases anxiety. Set a 30-minute limit daily.']];
+  const selected=tips.sort(()=>Math.random()-.5).slice(0,3);
+  el.innerHTML=selected.map(([ico,title,desc])=>`<div class="alert-banner ab-info" style="margin-bottom:8px;"><span class="ab-ico">${ico}</span><div><b>${title}</b><br/><span style="font-size:.78rem;">${desc}</span></div></div>`).join('');
+}
+
+function loadImmunityTips(){
+  const el=$('immunityTips');if(!el)return;
+  el.innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:7px;">
+      <div class="alert-banner ab-success"><span class="ab-ico">🧄</span><div><b>Garlic daily</b> — Natural antimicrobial, boosts immune cell activity by 30%</div></div>
+      <div class="alert-banner ab-success"><span class="ab-ico">☀️</span><div><b>Vitamin D</b> — 20 mins sunlight daily. Deficiency linked to 70% of immune issues in India</div></div>
+      <div class="alert-banner ab-success"><span class="ab-ico">💧</span><div><b>Stay hydrated</b> — 8 glasses daily flushes toxins, supports lymphatic system</div></div>
+      <div class="alert-banner ab-success"><span class="ab-ico">😴</span><div><b>Quality sleep</b> — 7-9 hours. Immune cells regenerate during sleep</div></div>
+    </div>`;
+}
+
+function loadEmotionDetection(){
+  const el=$('emotionDetection');if(!el)return;
+  const patterns=[];
+  if(HD.sleep<6&&HD.hr>85) patterns.push({emoji:'😤',label:'Stress pattern detected',desc:'Low sleep + high HR = classic stress signature. Action: reduce screen time before bed.'});
+  if(HD.steps<2000) patterns.push({emoji:'😔',label:'Low energy pattern',desc:'Minimal movement detected. Low activity is linked to low mood. A 10-min walk can help.'});
+  if(HD.medMinutes>30) patterns.push({emoji:'😌',label:'Calm mindset pattern',desc:'Regular meditation detected. You are building mental resilience. Keep going!'});
+  if(patterns.length===0) patterns.push({emoji:'😊',label:'Balanced emotion pattern',desc:'No negative emotion patterns detected. Maintain your current healthy lifestyle.'});
+  el.innerHTML=patterns.map(p=>`<div class="alert-banner ab-info"><span class="ab-ico">${p.emoji}</span><div><b>${p.label}</b><br/><span style="font-size:.78rem;">${p.desc}</span></div></div>`).join('');
+}
+
+// ── FAMILY ────────────────────────────────────────────────────────────
+function initFamily(){
+  const famData=JSON.parse(localStorage.getItem('hiw_family')||'{}');
+  if(famData.father){$('fatherName').textContent=famData.father.name||'Father';$('fatherStatus').textContent=`Age ${famData.father.age||'--'} · ${famData.father.condition||'No conditions'}`;}
+  if(famData.mother){$('motherName').textContent=famData.mother.name||'Mother';$('motherStatus').textContent=`Age ${famData.mother.age||'--'} · ${famData.mother.condition||'No conditions'}`;}
+  simulateFamilyData();
+}
+
+function simulateFamilyData(){
+  const fhr=65+Math.floor(Math.random()*30),mhr=68+Math.floor(Math.random()*25);
+  const fbp=`${110+Math.floor(Math.random()*30)}/${70+Math.floor(Math.random()*20)}`;
+  const mbp=`${108+Math.floor(Math.random()*28)}/${68+Math.floor(Math.random()*18)}`;
+  const fsteps=2000+Math.floor(Math.random()*6000),msteps=1500+Math.floor(Math.random()*5000);
+  $('fatherHR').textContent=fhr;$('fatherBP').textContent=fbp;$('fatherSteps').textContent=fsteps.toLocaleString();
+  $('motherHR').textContent=mhr;$('motherBP').textContent=mbp;$('motherSteps').textContent=msteps.toLocaleString();
+  const fa=$('fatherAlert');if(fa){if(fhr>90)fa.innerHTML='<div class="alert alert-w"><span>⚠️</span><span>Father\'s HR elevated. Suggest rest and check blood pressure.</span></div>';else fa.innerHTML='<div class="alert alert-s"><span>✅</span><span>Father\'s vitals look normal.</span></div>';}
+  const ma=$('motherAlert');if(ma){if(mhr>90)ma.innerHTML='<div class="alert alert-w"><span>⚠️</span><span>Mother\'s HR elevated. Suggest rest and hydration.</span></div>';else ma.innerHTML='<div class="alert alert-s"><span>✅</span><span>Mother\'s vitals look normal.</span></div>';}
+  toast('Family data refreshed');
+}
+
+function editFamily(who){famEditing=who;const famData=JSON.parse(localStorage.getItem('hiw_family')||'{}');const d=famData[who]||{};$('famModalTitle').textContent=`Edit ${who==='father'?'Father':'Mother'}`;$('famModalName').value=d.name||'';$('famModalAge').value=d.age||'';$('famModalCondition').value=d.condition||'';$('famModal').classList.add('on');}
+function closeFamModal(){$('famModal').classList.remove('on');}
+function saveFamilyMember(){const famData=JSON.parse(localStorage.getItem('hiw_family')||'{}');famData[famEditing]={name:stripJS($('famModalName').value.trim()),age:$('famModalAge').value,condition:stripJS($('famModalCondition').value.trim())};localStorage.setItem('hiw_family',JSON.stringify(famData));closeFamModal();initFamily();toast('Family member updated!');}
+function addFamilyMember(){const n=stripJS($('famName')?.value.trim());if(!n){toast('Enter name');return;}const fm=$('famMsg');if(fm)fm.innerHTML='<div class="alert alert-s"><span>✅</span><span>Member added successfully!</span></div>';[$('famName'),$('famAge'),$('famCondition')].forEach(el=>{if(el)el.value='';});toast('Family member added!');}
+
+// ── AI COACH ──────────────────────────────────────────────────────────
+function initAI(){generateAIAdvice();renderHabitCorrection();renderLifestyleRisk();renderDiseasePrediction();renderPreventiveChecklist();renderBehaviorEngine();}
+
+function generateAIAdvice(){
+  const el=$('aiCoachMain');if(!el)return;
+  const score=updateWellnessScore();
+  const advice=[];
+  if(HD.steps<STEP_GOAL)advice.push(`👣 Walk ${STEP_GOAL-HD.steps} more steps today. You're ${Math.round((HD.steps/STEP_GOAL)*100)}% to your goal.`);
+  if(HD.sleep<7)advice.push(`😴 Sleep ${(7-HD.sleep).toFixed(1)} more hours tonight. Sleep deficit reduces immunity by 25%.`);
+  if(HD.hr>85)advice.push(`❤️ High HR detected (${HD.hr} bpm). Avoid caffeine, practice breathing exercises.`);
+  if(HD.water<6)advice.push(`💧 Drink ${WATER_GOAL-HD.water} more glasses. Dehydration causes fatigue and headaches.`);
+  if(HD.medMinutes<10)advice.push(`🧘 Start a 5-min meditation today. Even brief sessions reduce cortisol significantly.`);
+  if(advice.length===0)advice.push(`🌟 Excellent health today! Score: ${score}/100. Maintain consistency for long-term wellness.`);
+  const mealSuggestion=HD.steps>=STEP_GOAL?'High-protein post-workout meal (dal, paneer, eggs)':'Light meal — vegetable soup, salad, roti';
+  el.innerHTML=`
+    <div style="margin-bottom:10px;">
+      ${advice.slice(0,3).map(a=>`<div class="alert-banner ab-info" style="margin-bottom:6px;"><span class="ab-ico">🤖</span><div>${a}</div></div>`).join('')}
+    </div>
+    <div class="alert-banner ab-success"><span class="ab-ico">🍽️</span><div><b>Today's meal suggestion:</b> ${mealSuggestion}</div></div>`;
+}
+
+function renderHabitCorrection(){
+  const el=$('habitCorrection');if(!el)return;
+  const habits=[{bad:HD.sleep<6,ico:'😴',bad_habit:'Sleeping less than 6 hours',fix:'Set sleep alarm at 10 PM. Avoid screens 1 hour before bed.',steps:['10 PM: Phone down','10:15 PM: Read a book','10:30 PM: Lights off']},{bad:HD.steps<3000,ico:'👣',bad_habit:'Not walking enough',fix:'Start with 500 extra steps each day until you reach 8,000.',steps:['Take stairs instead of lift','Walk during phone calls','Park farther from destination']},{bad:HD.water<5,ico:'💧',bad_habit:'Not drinking enough water',fix:'Set water reminders every 2 hours. Drink 1 glass when you wake up.',steps:['1 glass when waking','1 glass before each meal','Keep bottle on desk']}];
+  el.innerHTML=habits.filter(h=>h.bad).slice(0,2).map(h=>`<div style="margin-bottom:10px;"><div class="alert-banner ab-warning"><span class="ab-ico">${h.ico}</span><div><b>Habit to fix:</b> ${h.bad_habit}<br/><b>Action:</b> ${h.fix}</div></div><div style="padding:4px 8px;font-size:.76rem;color:var(--txt3);">${h.steps.map((s,i)=>`<span style="display:block;padding:3px 0;border-bottom:1px solid var(--bdr);">${i+1}. ${s}</span>`).join('')}</div></div>`).join('')||'<div class="alert alert-s"><span>✅</span><span>No major habits to correct today. Keep up your routine!</span></div>';
+}
+
+function renderLifestyleRisk(){
+  const el=$('lifestyleRisk');if(!el)return;
+  let score=100;
+  if(HD.sleep<6)score-=20;else if(HD.sleep<7)score-=10;
+  if(HD.steps<3000)score-=15;else if(HD.steps<STEP_GOAL)score-=8;
+  if(HD.hr>90)score-=15;else if(HD.hr>80)score-=8;
+  if(HD.water<4)score-=10;
+  const level=score>=80?'Low':'medium'?score>=60?'Medium':'High':'High';
+  const color=score>=80?'var(--green)':score>=60?'var(--amber)':'var(--red)';
+  el.innerHTML=`<div style="text-align:center;padding:8px;"><div style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:${color};">${score}</div><div style="font-size:.8rem;color:var(--txt3);">Lifestyle Score (out of 100)</div><div class="progress-bar" style="margin-top:8px;"><div class="pb-fill" style="width:${score}%;background:${color};"></div></div><div style="font-size:.78rem;color:var(--txt3);margin-top:6px;">Risk Level: <b style="color:${color};">${score>=80?'Low Risk ✅':score>=60?'Moderate Risk ⚠️':'High Risk ❗'}</b></div></div>`;
+}
+
+function renderDiseasePrediction(){
+  const el=$('diseasePrediction');if(!el)return;
+  const predictions=[];
+  if(HD.sleep<6&&HD.hr>80)predictions.push({year:'Next 3-6 months',risk:'Stress-related illness',level:'medium',action:'Improve sleep hygiene + daily meditation'});
+  if(HD.steps<3000)predictions.push({year:'Next 1-2 years',risk:'Metabolic syndrome risk increases',level:'medium',action:'Add 2000 steps/day progressively'});
+  if(HD.water<4)predictions.push({year:'Short term',risk:'Kidney stone risk (chronic dehydration)',level:'low',action:'Drink 8 glasses daily consistently'});
+  if(predictions.length===0)predictions.push({year:'Long term forecast',risk:'Low risk profile',level:'good',action:'Maintain current healthy lifestyle patterns'});
+  el.innerHTML=predictions.map(p=>`<div class="alert-banner ${p.level==='good'?'ab-success':p.level==='medium'?'ab-stress':'ab-warning'}" style="margin-bottom:6px;"><span class="ab-ico">${p.level==='good'?'✅':'⚠️'}</span><div><b>${p.year}: ${p.risk}</b><br/><span style="font-size:.76rem;">Action: ${p.action}</span></div></div>`).join('');
+}
+
+function renderPreventiveChecklist(){
+  const el=$('preventiveChecklist');if(!el)return;
+  const items=[{done:HD.steps>=STEP_GOAL,text:'Daily step goal achieved (8,000 steps)'},{done:HD.sleep>=7,text:'Sleep 7-9 hours consistently'},{done:HD.water>=WATER_GOAL,text:'Drink 8 glasses of water daily'},{done:HD.medMinutes>=5,text:'5+ minutes meditation today'},{done:HD.hr<90,text:'Heart rate in healthy range (<90 bpm)'},{done:HD.mood==='😄'||HD.mood==='🙂',text:'Positive mood tracked'}];
+  el.innerHTML=items.map(i=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--bdr);font-size:.83rem;color:${i.done?'var(--green)':'var(--txt3)'};">${i.done?'✅':'○'} ${i.text}</div>`).join('');
+}
+
+function scanFood(){
+  const food=stripJS($('foodInput')?.value.trim());
+  if(!food){toast('Enter a food name');return;}
+  const db_food={
+    'biryani':{cal:450,protein:18,carbs:60,fat:15,gi:'High',advice:'Rich and tasty! Limit to once a week. Pair with raita for better digestion.'},
+    'idli':{cal:120,protein:3,carbs:25,fat:0.5,gi:'Low',advice:'Excellent choice! Fermented, low fat, easy to digest. Perfect breakfast.'},
+    'roti':{cal:120,protein:4,carbs:22,fat:3,gi:'Medium',advice:'Good daily staple. Whole wheat roti is better than maida. Limit to 2-3 per meal.'},
+    'dal':{cal:150,protein:10,carbs:22,fat:2,gi:'Low',advice:'Excellent protein source. High fiber, good for heart health. Eat daily!'},
+    'rice':{cal:206,protein:4,carbs:45,fat:0.4,gi:'High',advice:'Brown rice is healthier. If eating white rice, pair with vegetables and protein to lower glycemic impact.'},
+    'samosa':{cal:260,protein:4,carbs:32,fat:13,gi:'High',advice:'High in calories and fat. Occasional treat only. Prefer baked over fried.'},
+    'dosa':{cal:165,protein:4,carbs:30,fat:3,gi:'Medium',advice:'Good fermented food. High in carbs but provides probiotics. Excellent breakfast choice.'},
+    'curd':{cal:100,protein:11,carbs:3,fat:5,gi:'Low',advice:'Excellent probiotic! Great for gut health. Eat daily, especially in summer. Boosts immunity.'},
+  };
+  const key=food.toLowerCase().replace(/\s/g,'');
+  const match=db_food[key]||db_food[Object.keys(db_food).find(k=>food.toLowerCase().includes(k))||''];
+  const el=$('foodResult');
+  if(!el)return;
+  if(match){el.innerHTML=`<div class="alert-banner ab-info"><span class="ab-ico">🍛</span><div><b>${food}</b><br/>Calories: ${match.cal} · Protein: ${match.protein}g · Carbs: ${match.carbs}g · Fat: ${match.fat}g<br/>GI Index: <b>${match.gi}</b><br/>${match.advice}</div></div>`;}
+  else{el.innerHTML=`<div class="alert-banner ab-info"><span class="ab-ico">🔍</span><div><b>${food}</b><br/>General tip: Choose whole foods over processed. Include protein + fiber + healthy fats in every meal. Avoid deep-fried and high-sugar foods daily.</div></div>`;}
+}
+
+function renderBehaviorEngine(){
+  const el=$('behaviorEngine');if(!el)return;
+  const behaviors=[{trigger:'Stress',behavior:'Emotional eating or skipping meals',intervention:'When stressed, drink water first. Wait 10 min before eating.'},{trigger:'Fatigue',behavior:'Skipping exercise',intervention:'On low-energy days, even a 5-min walk counts. Lower the barrier.'},{trigger:'Success',behavior:'Reward eating (unhealthy food)',intervention:'Reward yourself with non-food items: movie, call a friend, buy something small.'}];
+  el.innerHTML=behaviors.map(b=>`<div style="padding:10px;background:var(--bg2);border-radius:10px;margin-bottom:7px;font-size:.8rem;"><div><b>Trigger:</b> ${b.trigger} → ${b.behavior}</div><div style="color:var(--forest);font-weight:600;margin-top:4px;">🤖 AI: ${b.intervention}</div></div>`).join('');
+}
+
+// ── GPS & NEARBY ──────────────────────────────────────────────────────
+function getLocation(){
+  const el=$('locationStatus');
+  if(!navigator.geolocation){if(el)el.innerHTML='<div class="alert alert-w"><span>📍</span><span>GPS not available on this device</span></div>';renderNearbyPlaces(null,null);return;}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    userLat=pos.coords.latitude;userLng=pos.coords.longitude;
+    if(el)el.innerHTML=`<div class="alert alert-s"><span>📍</span><span>Location found: ${userLat.toFixed(4)}, ${userLng.toFixed(4)}</span></div>`;
+    renderNearbyPlaces(userLat,userLng);
+    renderGeoHealth();
+  },err=>{
+    if(el)el.innerHTML='<div class="alert alert-w"><span>📍</span><span>Location access denied. Showing sample nearby places.</span></div>';
+    renderNearbyPlaces(null,null);
+  },{timeout:8000,enableHighAccuracy:true});
+}
+
+function initNearby(){if(!userLat)getLocation();else{renderNearbyPlaces(userLat,userLng);renderGeoHealth();}}
+
+function renderNearbyPlaces(lat,lng){
+  const hospitals=[{name:'Apollo Hospital',dist:'0.8 km',time:'5 min',open:true,type:'Multi-specialty'},{name:'AIIMS Emergency',dist:'1.2 km',time:'8 min',open:true,type:'Government'},{name:'Yashoda Hospital',dist:'2.1 km',time:'12 min',open:true,type:'Multi-specialty'},{name:'Govt Primary Health Center',dist:'0.5 km',time:'3 min',open:true,type:'Primary Care'}];
+  const pharmacies=[{name:'MedPlus Pharmacy',dist:'0.3 km',time:'2 min',open:true},{name:'Apollo Pharmacy',dist:'0.6 km',time:'4 min',open:true},{name:'Medkart Pharmacy',dist:'1.0 km',time:'6 min',open:false},{name:'Jan Aushadhi Center',dist:'0.4 km',time:'3 min',open:true}];
+  const hel=$('hospitalList'),pel=$('pharmacyList');
+  if(hel)hel.innerHTML=hospitals.map(h=>`<div class="place-card" onclick="openMaps('hospital')"><div class="place-ico place-hosp">🏥</div><div><div class="place-name">${h.name}</div><div class="place-dist">${h.dist} · ${h.time} · ${h.type}</div></div><div class="place-open ${h.open?'po-open':'po-closed'}">${h.open?'Open':'Closed'}</div></div>`).join('');
+  if(pel)pel.innerHTML=pharmacies.map(p=>`<div class="place-card" onclick="openMaps('pharmacy')"><div class="place-ico place-pharm">💊</div><div><div class="place-name">${p.name}</div><div class="place-dist">${p.dist} · ${p.time}</div></div><div class="place-open ${p.open?'po-open':'po-closed'}">${p.open?'Open':'Closed'}</div></div>`).join('');
+}
+
+function openMaps(type){
+  const q=type==='hospital'?'hospital near me':'pharmacy near me';
+  const url=userLat?`https://www.google.com/maps/search/${q}/@${userLat},${userLng},14z`:`https://www.google.com/maps/search/${q}`;
+  window.open(url,'_blank');
+}
+
+function renderGeoHealth(){
+  const el=$('geoHealth');if(!el)return;
+  el.innerHTML=`
+    <div class="alert-banner ab-info"><span class="ab-ico">🌆</span><div><b>Urban area detected</b><br/>Higher pollution risk. Use N95 mask on dusty days. Check AQI before outdoor exercise.</div></div>
+    <div class="alert-banner ab-success" style="margin-top:8px;"><span class="ab-ico">🌡️</span><div><b>Climate tip</b><br/>Hydrate extra in warm weather. Drink water before feeling thirsty.</div></div>`;
+}
+
+function triggerSOS(){
+  const confirmed=confirm('🆘 EMERGENCY SOS\n\nThis will call emergency services (112) and share your location.\n\nConfirm only in real emergency!');
+  if(!confirmed)return;
+  toast('🆘 SOS activated! Calling 112...',5000);
+  const msg=userLat?`Emergency! Location: ${userLat.toFixed(4)},${userLng.toFixed(4)} — Need help!`:'Emergency! Need immediate medical help!';
+  // Attempt to call 112
+  window.location.href='tel:112';
+  // Also try WhatsApp emergency
+  setTimeout(()=>{if(navigator.share){navigator.share({title:'EMERGENCY SOS',text:msg});}},2000);
+}
+
+// GUARDIAN MODE
+let guardianInterval=null;
+function toggleGuardian(){
+  HD.guardianMode=!HD.guardianMode;
+  localStorage.setItem('hiw_guardian',HD.guardianMode.toString());
+  const btn=$('guardianBtn');const el=$('guardianMode');
+  if(HD.guardianMode){
+    if(btn){btn.textContent='Disable Guardian Mode';btn.classList.add('btn-red');btn.classList.remove('btn-primary');}
+    if(el)el.innerHTML='<div class="alert alert-s"><span>🛡️</span><span>Health Guardian Mode ACTIVE. Monitoring HR, activity and stress patterns every 5 minutes. Alert will be sent if anomaly detected.</span></div>';
+    guardianInterval=setInterval(()=>{if(HD.hr>100||HD.sleep<4){toast('🛡️ Health Guardian: Anomaly detected! Check your vitals.',6000);}},300000);
+    toast('🛡️ Guardian Mode activated!');
+  }else{
+    clearInterval(guardianInterval);
+    if(btn){btn.textContent='Enable Guardian Mode';btn.classList.remove('btn-red');btn.classList.add('btn-primary');}
+    if(el)el.innerHTML='<div class="alert alert-i"><span>🛡️</span><span>Guardian Mode is OFF. Enable to auto-monitor your health and get alerts.</span></div>';
+    toast('Guardian Mode disabled');
+  }
+}
+
+// ── RECORDS ───────────────────────────────────────────────────────────
+function initRecords(){renderHealthProfile();renderHealthRecords();renderWeeklySummary();renderMicroClimate();}
+
+function renderHealthProfile(){
+  const el=$('healthProfile');if(!el)return;
+  const name=CD?.name||'User';
+  const blood=CD?.bloodGroup||localStorage.getItem('hiw_blood')||'Unknown';
+  const items=[{ico:'👤',lbl:'Name',val:name},{ico:'🩸',lbl:'Blood Group',val:blood},{ico:'❤️',lbl:'Resting HR',val:HD.hr+' bpm'},{ico:'👣',lbl:'Today Steps',val:HD.steps.toLocaleString()},{ico:'🌙',lbl:'Last Sleep',val:HD.sleep+'h'},{ico:'💧',lbl:'Water Today',val:HD.water+' glasses'}];
+  el.innerHTML=items.map(i=>`<div style="background:var(--bg2);border-radius:10px;padding:11px;text-align:center;"><div style="font-size:1.2rem;margin-bottom:3px;">${i.ico}</div><div style="font-weight:700;font-size:.86rem;color:var(--txt);">${i.val}</div><div style="font-size:.65rem;color:var(--txt4);margin-top:1px;">${i.lbl}</div></div>`).join('');
+}
+
+function renderHealthRecords(){
+  const el=$('healthRecords');if(!el)return;
+  const records=JSON.parse(localStorage.getItem('hiw_records')||'[]');
+  if(!records.length){el.innerHTML='<div class="empty"><div class="empty-ico">📋</div><div class="empty-title">No records yet</div><div style="font-size:.8rem;color:var(--txt4);">Add blood pressure, sugar readings, doctor visits etc.</div></div>';return;}
+  el.innerHTML=records.slice(-5).reverse().map(r=>`<div style="padding:9px 0;border-bottom:1px solid var(--bdr);font-size:.82rem;"><div style="font-weight:600;">${r.type}</div><div style="color:var(--txt3);">${r.value} · ${r.date}</div></div>`).join('');
+}
+
+function showAddRecord(){
+  const type=prompt('Record type (e.g. Blood Pressure, Blood Sugar, Weight):');
+  if(!type)return;
+  const value=prompt(`Enter value for ${type}:`);
+  if(!value)return;
+  const records=JSON.parse(localStorage.getItem('hiw_records')||'[]');
+  records.push({type:stripJS(type),value:stripJS(value),date:new Date().toLocaleDateString('en-IN')});
+  localStorage.setItem('hiw_records',JSON.stringify(records));
+  renderHealthRecords();
+  toast('Record saved!');
+}
+
+function renderWeeklySummary(){
+  const el=$('weeklySummary');if(!el)return;
+  const avgSteps=Math.round(HD.stepsHistory.slice(-7).reduce((a,b)=>a+b,0)/7);
+  const avgSleep=(HD.sleepHistory.slice(-7).reduce((a,b)=>a+b,0)/7).toFixed(1);
+  const avgHR=Math.round(HD.hrHistory.slice(-7).reduce((a,b)=>a+b,0)/7);
+  el.innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+      <div style="background:var(--bg2);border-radius:10px;padding:10px;text-align:center;"><div style="font-weight:700;font-size:1rem;color:var(--forest);">${avgSteps.toLocaleString()}</div><div style="font-size:.65rem;color:var(--txt4);">Avg Steps</div></div>
+      <div style="background:var(--bg2);border-radius:10px;padding:10px;text-align:center;"><div style="font-weight:700;font-size:1rem;color:var(--purple);">${avgSleep}h</div><div style="font-size:.65rem;color:var(--txt4);">Avg Sleep</div></div>
+      <div style="background:var(--bg2);border-radius:10px;padding:10px;text-align:center;"><div style="font-weight:700;font-size:1rem;color:var(--red);">${avgHR}</div><div style="font-size:.65rem;color:var(--txt4);">Avg HR bpm</div></div>
+    </div>
+    <div style="margin-top:10px;font-size:.8rem;color:var(--txt3);text-align:center;">7-day averages · ${avgSteps>=STEP_GOAL?'✅ Step goal met':'⚠️ Below step goal'} · ${parseFloat(avgSleep)>=7?'✅ Good sleep':'⚠️ Improve sleep'}</div>`;
+}
+
+function renderMicroClimate(){
+  const el=$('microClimate');if(!el)return;
+  const hour=new Date().getHours();
+  const advice=hour<10?'Morning: Good for outdoor exercise. UV index low. Air quality best before 9 AM.':hour<14?'Afternoon: High UV. Avoid outdoor exercise 11 AM–3 PM. Stay hydrated.':hour<18?'Evening: Good for walking. Reduce pollution exposure by wearing a mask near traffic.':'Night: Cool temperature. Good for light walk. Avoid heavy meals after 8 PM.';
+  el.innerHTML=`<div class="alert-banner ab-info"><span class="ab-ico">🌡️</span><div><b>Current time health tip</b><br/>${advice}</div></div>`;
+}
+
+// ── DOWNLOAD REPORT ────────────────────────────────────────────────────
+function downloadReport(){
+  const name=CD?.name||'User';
+  const date=new Date().toLocaleDateString('en-IN');
+  const score=updateWellnessScore()||'--';
+  const report=`HEALTH IS WEALTH — HEALTH REPORT
+Generated: ${date}
+Patient: ${name}
+Blood Group: ${CD?.bloodGroup||'Unknown'}
+
+═══ TODAY'S VITALS ═══
+Steps: ${HD.steps.toLocaleString()} / ${STEP_GOAL} goal
+Heart Rate: ${HD.hr} bpm
+Sleep: ${HD.sleep} hours
+Water: ${HD.water} glasses
+Mood: ${HD.mood} ${HD.moodLabel}
+Wellness Score: ${score}/100
+Daily Streak: ${HD.streak} days
+
+═══ 7-DAY AVERAGES ═══
+Avg Steps: ${Math.round(HD.stepsHistory.slice(-7).reduce((a,b)=>a+b,0)/7).toLocaleString()}
+Avg Sleep: ${(HD.sleepHistory.slice(-7).reduce((a,b)=>a+b,0)/7).toFixed(1)} hours
+Avg HR: ${Math.round(HD.hrHistory.slice(-7).reduce((a,b)=>a+b,0)/7)} bpm
+
+═══ AI HEALTH ANALYSIS ═══
+${HD.sleep<6?'⚠️ Sleep deficit detected — critical for recovery':'✅ Sleep duration adequate'}
+${HD.hr>90?'⚠️ HR elevated — monitor closely':'✅ Heart rate in healthy range'}
+${HD.steps<STEP_GOAL?`⚠️ Steps below goal — need ${STEP_GOAL-HD.steps} more today`:'✅ Step goal achieved'}
+${HD.water<6?'⚠️ Hydration below optimal':'✅ Good hydration'}
+
+═══ RECOMMENDATIONS ═══
+1. ${HD.sleep<7?'Prioritize 7-9 hours of sleep nightly':'Maintain your current sleep schedule'}
+2. ${HD.steps<STEP_GOAL?'Increase daily movement — aim for 8,000 steps':'Continue active lifestyle'}
+3. Drink 8 glasses of water daily
+4. Practice 5-10 minutes of meditation
+5. Schedule annual health check-up
+
+═══ GENERATED BY ═══
+Health is Wealth — AI Health Platform
+health-and-health.github.io
+`;
+  const blob=new Blob([report],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`health-report-${name.replace(/\s/g,'-')}-${date.replace(/\//g,'-')}.txt`;
+  a.click();
+  toast('📥 Health report downloaded!');
+}
+
+// ── FIRST AID ─────────────────────────────────────────────────────────
+function initFirstAid(){renderFirstAid();renderHomeRemedies();renderHealthTips();renderBloodGroup();}
+
+const FIRST_AID=[{ico:'🤕',title:'Head Injury / Concussion',color:'var(--red2)',steps:['Keep person still and calm','Check for loss of consciousness','Apply cold pack to swelling','Do NOT move if spine injury suspected','Call 112 immediately for severe cases']},{ico:'🔥',title:'Burns',color:'#fff7ed',steps:['Cool with running cold water for 10-20 mins','Do NOT use ice or butter','Cover loosely with clean cloth','Do NOT burst blisters','Seek medical help for large burns']},{ico:'🩸',title:'Bleeding Control',color:'var(--red2)',steps:['Apply firm pressure with clean cloth','Elevate the injured limb above heart','Do NOT remove embedded objects','Keep pressing — do not release','Call 112 if bleeding is severe']},{ico:'😮‍💨',title:'Choking (Adult)',color:'var(--amber2)',steps:['Ask "Are you choking?" — if yes, act','Stand behind, lean forward','Give 5 firm back blows between shoulder blades','Give 5 abdominal thrusts (Heimlich)','Repeat until object dislodges','Call 112 if unconscious']},{ico:'💊',title:'Drug / Poison Overdose',color:'var(--purple2)',steps:['Call Poison Control: 1800-11-4433','Keep person awake and talking','Do NOT induce vomiting unless told to','Collect medication/substance for responders','Call 112 for severe symptoms']},{ico:'😵',title:'Fainting / Unconscious',color:var('--blue2'),steps:['Lay person on back, elevate legs','Loosen tight clothing','Check breathing','Do NOT give food/water','Recovery position if breathing normally','Call 112 if not recovering in 1 minute']}];
+
+function renderFirstAid(){
+  const el=$('firstAidList');if(!el)return;
+  el.innerHTML=FIRST_AID.map((fa,i)=>`<div class="firstaid-card"><div class="fa-header" onclick="toggleFA('fa${i}')"><div class="fa-ico" style="background:${fa.color};">${fa.ico}</div><div class="fa-title">${fa.title}</div><div class="fa-arrow" id="faa${i}">▼</div></div><div class="fa-body" id="fa${i}">${fa.steps.map((s,j)=>`<div style="padding:4px 0;border-bottom:1px solid var(--bdr);font-size:.79rem;">${j+1}. ${s}</div>`).join('')}</div></div>`).join('');
+}
+
+function toggleFA(id){const el=$(id);const arrow=$('faa'+id.replace('fa',''));if(el.classList.contains('open')){el.classList.remove('open');if(arrow)arrow.textContent='▼';}else{el.classList.add('open');if(arrow)arrow.textContent='▲';}}
+
+const HOME_REMEDIES=[{ico:'🤧',condition:'Common Cold',remedy:'Ginger + honey + tulsi tea, steam inhalation, turmeric milk before sleep'},{ico:'🤢',condition:'Nausea / Upset Stomach',remedy:'Ginger tea, jeera water, light rice kanji. Avoid heavy/spicy food.'},{ico:'🤯',condition:'Headache',remedy:'Cold compress, peppermint oil on temples, ginger tea, adequate hydration'},{ico:'😮‍💨',condition:'Cough',remedy:'Honey + ginger + black pepper tea. Steam inhalation with eucalyptus.'},{ico:'🦟',condition:'Mosquito Bites',remedy:'Neem leaves paste, turmeric paste, aloe vera gel application'},{ico:'🤕',condition:'Joint / Knee Pain',remedy:'Warm compress, turmeric milk, light stretching. Consult doctor if severe.'},{ico:'😴',condition:'Insomnia / Poor Sleep',remedy:'Warm milk with nutmeg, chamomile tea, avoid screens 1 hour before bed'},{ico:'🩸',condition:'High Blood Pressure',remedy:'Garlic daily, amla juice, reduce salt, regular walking 30 mins'}];
+
+function renderHomeRemedies(){
+  const el=$('homeRemediesList');if(!el)return;
+  el.innerHTML=HOME_REMEDIES.map((r,i)=>`<div class="firstaid-card"><div class="fa-header" onclick="toggleFA('hr${i}')"><div class="fa-ico" style="background:var(--green2);">${r.ico}</div><div class="fa-title">${r.condition}</div><div class="fa-arrow" id="hraa${i}">▼</div></div><div class="fa-body" id="hr${i}"><div style="font-size:.8rem;color:var(--txt3);line-height:1.6;">🌿 <b>Remedy:</b> ${r.remedy}<br/><span style="color:var(--amber);font-size:.74rem;">⚠️ Consult a doctor if symptoms persist or worsen.</span></div></div></div>`).join('');
+  // Fix toggleFA for home remedies
+  document.querySelectorAll('[id^="hraa"]').forEach((el,i)=>{el.id='faa'+'hr'+i;});
+  document.querySelectorAll('[id^="hr"]').forEach((el,i)=>{if(!el.id.includes('hraa'))el.id='fa'+'hr'+i;});
+}
+
+const HEALTH_TIPS=['💧 Drink water first thing in morning — activates internal organs and clears toxins','🌅 Get 20 mins of sunlight daily — boosts Vitamin D, serotonin and calcium absorption','🥗 Eat a rainbow of vegetables — different colors = different protective phytonutrients','🚶 A 10-min walk after meals reduces blood sugar spike by up to 22%','😴 Your bedroom temperature should be 18-22°C for optimal sleep quality','🧘 Deep breathing for 2 mins activates parasympathetic nervous system — instant calm','🫀 Sitting for 3+ hours straight increases heart disease risk — stand up every 45 mins','🍌 Bananas are nature\'s energy bar — potassium, magnesium, natural sugars for energy','🌿 Tulsi (holy basil) is a natural adaptogen — reduces stress hormones significantly','🫁 Breathing through your nose (not mouth) filters air and increases oxygen absorption by 18%'];
+
+function renderHealthTips(){
+  const el=$('healthTipsList');if(!el)return;
+  el.innerHTML=HEALTH_TIPS.sort(()=>Math.random()-.5).slice(0,5).map(t=>`<div class="alert-banner ab-info" style="margin-bottom:6px;"><span class="ab-ico">💡</span><div style="font-size:.8rem;">${t}</div></div>`).join('');
+}
+
+function renderBloodGroup(){
+  const el=$('bloodGroupInfo');if(!el)return;
+  const blood=CD?.bloodGroup||localStorage.getItem('hiw_blood')||'Unknown';
+  const info={
+    'A+':{donate:'A+, AB+',receive:'A+, A-, O+, O-',tip:'Higher risk of heart disease. Mediterranean diet recommended.'},
+    'B+':{donate:'B+, AB+',receive:'B+, B-, O+, O-',tip:'Good gut microbiome flexibility. Diverse diet is beneficial.'},
+    'AB+':{donate:'AB+ only',receive:'All blood types (Universal receiver!)',tip:'Lower risk of cognitive decline. Stay mentally active.'},
+    'O+':{donate:'O+, A+, B+, AB+',receive:'O+, O-',tip:'Slightly higher ulcer risk. Avoid excessive coffee/alcohol.'},
+    'O-':{donate:'All types (Universal donor!)',receive:'O- only',tip:'Universal donor — consider donating blood regularly.'},
+  };
+  const binfo=info[blood]||{donate:'Check with doctor',receive:'Check with doctor',tip:'Knowing your blood group is essential for emergencies.'};
+  el.innerHTML=`
+    <div style="text-align:center;padding:12px;"><div style="font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;color:var(--red);">${blood}</div><div style="font-size:.76rem;color:var(--txt3);margin-bottom:12px;">Your Blood Group</div></div>
+    <div style="display:flex;flex-direction:column;gap:7px;font-size:.8rem;">
+      <div style="padding:8px;background:var(--red2);border-radius:8px;"><b>Can donate to:</b> ${binfo.donate}</div>
+      <div style="padding:8px;background:var(--green2);border-radius:8px;"><b>Can receive from:</b> ${binfo.receive}</div>
+      <div style="padding:8px;background:var(--blue2);border-radius:8px;"><b>Health tip:</b> ${binfo.tip}</div>
+    </div>`;
+}
+
+// ── URL & INIT ─────────────────────────────────────────────────────────
+// Fix GitHub Pages URL — remove owner name reference
+(function(){
+  const currentURL=window.location.href;
+  // App is hosted at health-and-health.github.io
+  if(currentURL.includes('bonagirispinoj')){
+    console.log('Note: Please access via health-and-health.github.io');
+  }
+})();
+</script>
+</body>
+</html>
